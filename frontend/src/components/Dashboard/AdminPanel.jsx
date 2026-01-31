@@ -11,16 +11,26 @@ function AdminPanel() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // ✅ CORRIGIDO: Buscar dados reais do backend em vez de mocados
+    // ✅ CONECTADO ao backend para buscar dados reais
     const fetchMetrics = async () => {
       try {
-        // TODO: Conectar ao backend
-        // const response = await fetch('/api/admin/dashboard');
-        // if (!response.ok) throw new Error('Falha ao buscar métricas');
-        // const data = await response.json();
-        // setMetrics(data);
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
         
-        // Dados padrão vazios enquanto backend não está conectado
+        const response = await fetch(`${API_URL}/api/admin/dashboard`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+          },
+          credentials: 'include'
+        });
+        
+        if (!response.ok) throw new Error('Falha ao buscar métricas');
+        
+        const data = await response.json();
+        setMetrics(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('❌ Erro ao buscar métricas:', error);
+        // Se houver erro, manter dados vazios
         setMetrics({
           totalBookings: 0,
           revenue: 0,
@@ -28,9 +38,6 @@ function AdminPanel() {
           teamMembers: 0,
           satisfaction: 0,
         });
-        setLoading(false);
-      } catch (error) {
-        console.error('❌ Erro ao buscar métricas:', error);
         setLoading(false);
       }
     };

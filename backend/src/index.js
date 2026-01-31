@@ -7,6 +7,8 @@ const express = require('express');
 const cors = require('cors');
 const http = require('http');
 const socketIO = require('socket.io');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const apiRoutes = require('./routes/api');
@@ -29,7 +31,35 @@ const io = socketIO(server, {
 const chatService = new ChatService(io);
 
 // ===== MIDDLEWARE =====
-app.use(cors());
+// Segurança com Helmet
+app.use(helmet());
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 100, // Limite 100 requisições por IP
+  message: 'Muitas requisições deste IP, tente novamente mais tarde',
+  standardHeaders: true, // Retorna informações de rate-limit nos headers
+  legacyHeaders: false, // Desabilita X-RateLimit-* headers
+  skip: (req) => {
+    // Não aplicar rate limit em rotas de health check
+    return req.path === '/health';
+  }
+});
+
+// Aplicar rate limit globalmente
+app.use(limiter);
+
+// CORS com configuração mais segura
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN || ['http://localhost:3000', 'http://localhost:3001'],
+  credentials: true,
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

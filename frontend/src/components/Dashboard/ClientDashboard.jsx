@@ -10,26 +10,33 @@ function ClientDashboard({ userId }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // ✅ CORRIGIDO: Buscar dados reais do backend em vez de mocados
+    // ✅ CONECTADO ao backend para buscar dados reais
     const fetchBookings = async () => {
       try {
-        // TODO: Conectar ao backend
-        // const response = await fetch(`/api/clients/${userId}/bookings`);
-        // if (!response.ok) throw new Error('Falha ao buscar agendamentos');
-        // const data = await response.json();
-        // setStats(data.stats);
-        // setBookings(data.bookings);
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
         
-        // Dados padrão vazios enquanto backend não está conectado
+        const response = await fetch(`${API_URL}/api/clients/${userId}/bookings`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+          },
+          credentials: 'include'
+        });
+        
+        if (!response.ok) throw new Error('Falha ao buscar agendamentos');
+        
+        const data = await response.json();
+        setStats(data.stats);
+        setBookings(data.bookings);
+        setLoading(false);
+      } catch (error) {
+        console.error('❌ Erro ao buscar agendamentos:', error);
+        // Se houver erro, manter dados vazios
         setStats({
           totalServices: 0,
           totalSpent: 0,
           nextBooking: null,
         });
         setBookings([]);
-        setLoading(false);
-      } catch (error) {
-        console.error('❌ Erro ao buscar agendamentos:', error);
         setLoading(false);
       }
     };

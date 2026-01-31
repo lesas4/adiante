@@ -58,16 +58,25 @@ export default function Agendar() {
         totalPrice: calculateTotal(),
       };
       
-      // TODO: Conectar ao backend para enviar agendamento
-      // const response = await fetch('/api/bookings', { 
-      //   method: 'POST', 
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(booking) 
-      // });
-      // if (!response.ok) throw new Error('Falha ao agendar');
+      // ✅ CONECTADO ao backend para enviar agendamento
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       
-      // Simulação de sucesso
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const response = await fetch(`${API_URL}/api/bookings`, { 
+        method: 'POST', 
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+        },
+        body: JSON.stringify(booking),
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Falha ao agendar');
+      }
+      
+      const result = await response.json();
       
       addToast('✅ Agendamento realizado com sucesso!', 'success');
       
