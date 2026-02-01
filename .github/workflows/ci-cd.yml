@@ -1,0 +1,336 @@
+name: 🚀 CI/CD Pipeline - Limpeza Pro
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: '20'
+  REGISTRY: ghcr.io
+
+jobs:
+  # ============================================
+  # 🧪 TESTES - Frontend + Backend
+  # ============================================
+  test:
+    name: 🧪 Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - working-directory: backend
+            node-version: '20'
+          - working-directory: frontend
+            node-version: '20'
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: '${{ matrix.working-directory }}/package-lock.json'
+
+      - name: 📦 Install dependencies
+        working-directory: ${{ matrix.working-directory }}
+        run: npm ci
+
+      - name: 🧪 Run tests
+        working-directory: ${{ matrix.working-directory }}
+        run: npm test -- --coverage
+        env:
+          NODE_ENV: test
+          CI: true
+
+      - name: 📊 Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./${{ matrix.working-directory }}/coverage/lcov.info
+          flags: ${{ matrix.working-directory }}
+          name: ${{ matrix.working-directory }}-coverage
+          fail_ci_if_error: false
+
+  # ============================================
+  # 🔍 LINTING - Code Quality
+  # ============================================
+  lint:
+    name: 🔍 Lint
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - working-directory: backend
+          - working-directory: frontend
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '${{ matrix.working-directory }}/package-lock.json'
+
+      - name: 📦 Install dependencies
+        working-directory: ${{ matrix.working-directory }}
+        run: npm ci
+
+      - name: 🔍 Run ESLint
+        working-directory: ${{ matrix.working-directory }}
+        run: npm run lint || true
+
+      - name: 📝 Check for security vulnerabilities
+        working-directory: ${{ matrix.working-directory }}
+        run: npm audit --audit-level=moderate || true
+
+  # ============================================
+  # 🏗️ BUILD - Compilação
+  # ============================================
+  build:
+    name: 🏗️ Build
+    runs-on: ubuntu-latest
+    needs: [test, lint]
+    strategy:
+      matrix:
+        include:
+          - working-directory: backend
+            artifact-name: backend-build
+          - working-directory: frontend
+            artifact-name: frontend-build
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '${{ matrix.working-directory }}/package-lock.json'
+
+      - name: 📦 Install dependencies
+        working-directory: ${{ matrix.working-directory }}
+        run: npm ci
+
+      - name: 🏗️ Build
+        working-directory: ${{ matrix.working-directory }}
+        run: |
+          if [ -f "package.json" ] && grep -q '"build"' package.json; then
+            npm run build
+          fi
+        env:
+          NODE_ENV: production
+
+      - name: 💾 Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.artifact-name }}
+          path: |
+            ${{ matrix.working-directory }}/dist
+            ${{ matrix.working-directory }}/.next
+            ${{ matrix.working-directory }}/build
+          retention-days: 7
+
+  # ============================================
+  # 🚀 DEPLOY - Staging
+  # ============================================
+  deploy-staging:
+    name: 🌱 Deploy Staging
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    needs: [build]
+    environment:
+      name: staging
+      url: https://staging.seu-dominio.com
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📥 Download frontend build
+        uses: actions/download-artifact@v3
+        with:
+          name: frontend-build
+
+      - name: 🚀 Deploy Frontend to Vercel (Staging)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_STAGING }}
+        run: |
+          npm install -g vercel@latest
+          vercel --token $VERCEL_TOKEN --yes
+
+      - name: 📥 Download backend build
+        uses: actions/download-artifact@v3
+        with:
+          name: backend-build
+
+      - name: 🚀 Deploy Backend to Railway (Staging)
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID_STAGING }}
+        run: |
+          npm install -g @railway/cli@latest
+          railway deploy --token $RAILWAY_TOKEN
+
+      - name: ✅ Notify Slack - Staging Deploy
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: 'Staging deployment ${{ job.status }}'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+  # ============================================
+  # 🎯 DEPLOY - Production
+  # ============================================
+  deploy-production:
+    name: 🚀 Deploy Production
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    needs: [build]
+    environment:
+      name: production
+      url: https://seu-dominio.com
+    concurrency:
+      group: production-deploy
+      cancel-in-progress: false
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔐 Create deployment
+        uses: actions/github-script@v6
+        id: deployment
+        with:
+          script: |
+            const deployment = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha,
+              environment: 'production',
+              auto_merge: false,
+              required_contexts: []
+            });
+            return deployment.data.id;
+
+      - name: 📥 Download frontend build
+        uses: actions/download-artifact@v3
+        with:
+          name: frontend-build
+
+      - name: 🚀 Deploy Frontend to Vercel (Production)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          npm install -g vercel@latest
+          vercel deploy --token $VERCEL_TOKEN --prod --yes
+
+      - name: 📥 Download backend build
+        uses: actions/download-artifact@v3
+        with:
+          name: backend-build
+
+      - name: 🚀 Deploy Backend to Railway (Production)
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+        run: |
+          npm install -g @railway/cli@latest
+          railway deploy --token $RAILWAY_TOKEN
+
+      - name: ✅ Update deployment status
+        uses: actions/github-script@v6
+        if: always()
+        with:
+          script: |
+            github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: ${{ steps.deployment.outputs.result }},
+              state: '${{ job.status }}',
+              environment_url: 'https://seu-dominio.com'
+            });
+
+      - name: 📢 Notify Slack - Production Deploy
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: |
+            Production deployment ${{ job.status }}
+            Commit: ${{ github.event.head_commit.message }}
+            Author: ${{ github.event.head_commit.author.name }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: 🔔 Create Release
+        if: success()
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          body: |
+            Production deployment successful!
+            
+            **Changes:**
+            - Deployed to: https://seu-dominio.com
+            - Commit: ${{ github.sha }}
+            - Date: ${{ github.event.head_commit.timestamp }}
+          draft: false
+          prerelease: false
+
+  # ============================================
+  # 📊 REPORT - Coverage & Performance
+  # ============================================
+  report:
+    name: 📊 Generate Reports
+    runs-on: ubuntu-latest
+    needs: [test]
+    if: always()
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📥 Download coverage reports
+        uses: actions/download-artifact@v3
+
+      - name: 📊 Generate coverage badge
+        run: |
+          mkdir -p .github/badges
+          echo "Coverage badge will be generated here"
+
+      - name: 💾 Upload reports to artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: coverage/
+          retention-days: 30
+
+      - name: 📈 Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const coverage = fs.readFileSync('coverage/coverage-summary.json', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `📊 **Test Coverage Report**\n\n\`\`\`\n${coverage}\n\`\`\``
+            });

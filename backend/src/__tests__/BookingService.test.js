@@ -41,5 +41,53 @@ describe('BookingService', () => {
     test('should be a function', () => {
       expect(typeof BookingService.getDefaultCancellationPolicy).toBe('function');
     });
+
+    test('should return an object with cancellation policy', () => {
+      const policy = BookingService.getDefaultCancellationPolicy();
+      expect(typeof policy).toBe('object');
+    });
+  });
+
+  describe('validateBookingData', () => {
+    test('should be a function', () => {
+      expect(typeof BookingService.validateBookingData).toBe('function');
+    });
+
+    test('should throw when missing userId', () => {
+      expect(() => BookingService.validateBookingData({})).toThrow('userId é obrigatório');
+    });
+
+    test('should throw when missing serviceId', () => {
+      expect(() => BookingService.validateBookingData({ userId: 'user123' })).toThrow('serviceId é obrigatório');
+    });
+  });
+
+  describe('calculatePrice', () => {
+    test('should be a function', () => {
+      expect(typeof BookingService.calculatePrice).toBe('function');
+    });
+
+    test('should return a number', () => {
+      const price = BookingService.calculatePrice(
+        [{ basePrice: 100 }],
+        10, // metragem
+        1, // hours
+        'standard'
+      );
+      expect(typeof price).toBe('number');
+      expect(price).toBeGreaterThan(0);
+    });
+  });
+
+  describe('calculateCancellationPenalty', () => {
+    test('should be a function', () => {
+      expect(typeof BookingService.calculateCancellationPenalty).toBe('function');
+    });
+
+    test('should calculate penalty based on hours until booking', () => {
+      const penalty = BookingService.calculateCancellationPenalty(100, 48);
+      expect(typeof penalty).toBe('number');
+      expect(penalty).toBeGreaterThanOrEqual(0);
+    });
   });
 });

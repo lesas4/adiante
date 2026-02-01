@@ -1,5 +1,6 @@
 import '../styles/globals.css'
 import React from 'react'
+import '../sentry.client'
 import { ThemeProvider } from '../context/ThemeContext'
 import { AuthProvider } from '../context/AuthContext'
 import { ToastProvider } from '../context/ToastContext'
