@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -149,17 +149,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -169,7 +169,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -184,7 +184,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -198,7 +198,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -214,7 +214,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -224,23 +224,23 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
  * Email Templates
  * Templates de e-mail para diferentes cenários
  */
 &nbsp;
-const emailTemplates = <span class="cstat-no" title="statement not covered" >{</span>
+const emailTemplates = {
   bookingConfirmation: {
     subject: 'Agendamento Confirmado - LimpezaPro',
-    template: <span class="fstat-no" title="function not covered" >(b</span>ooking, user) =&gt; <span class="cstat-no" title="statement not covered" >`</span>
+    template: (booking, user) =&gt; `
       &lt;h2&gt;Agendamento Confirmado!&lt;/h2&gt;
       &lt;p&gt;Olá ${user.name},&lt;/p&gt;
       &lt;p&gt;Seu agendamento foi confirmado com sucesso.&lt;/p&gt;
       &lt;h3&gt;Detalhes:&lt;/h3&gt;
       &lt;ul&gt;
         &lt;li&gt;&lt;strong&gt;Data:&lt;/strong&gt; ${booking.date}&lt;/li&gt;
-        &lt;li&gt;&lt;strong&gt;Serviços:&lt;/strong&gt; ${booking.services.map(<span class="fstat-no" title="function not covered" >s </span>=&gt; <span class="cstat-no" title="statement not covered" >s.name)</span>.join(', ')}&lt;/li&gt;
+        &lt;li&gt;&lt;strong&gt;Serviços:&lt;/strong&gt; ${booking.services.map(s =&gt; s.name).join(', ')}&lt;/li&gt;
         &lt;li&gt;&lt;strong&gt;Endereço:&lt;/strong&gt; ${booking.address}&lt;/li&gt;
         &lt;li&gt;&lt;strong&gt;Preço:&lt;/strong&gt; R$ ${booking.price.toFixed(2)}&lt;/li&gt;
       &lt;/ul&gt;
@@ -250,7 +250,7 @@ const emailTemplates = <span class="cstat-no" title="statement not covered" >{</
 &nbsp;
   reminder24h: {
     subject: 'Lembrete: Seu agendamento é amanhã',
-    template: <span class="fstat-no" title="function not covered" >(b</span>ooking, user) =&gt; <span class="cstat-no" title="statement not covered" >`</span>
+    template: (booking, user) =&gt; `
       &lt;h2&gt;Não se esqueça!&lt;/h2&gt;
       &lt;p&gt;Olá ${user.name},&lt;/p&gt;
       &lt;p&gt;Seu agendamento está marcado para &lt;strong&gt;amanhã&lt;/strong&gt;.&lt;/p&gt;
@@ -265,7 +265,7 @@ const emailTemplates = <span class="cstat-no" title="statement not covered" >{</
 &nbsp;
   followUp: {
     subject: 'Como foi o serviço?',
-    template: <span class="fstat-no" title="function not covered" >(b</span>ooking, user) =&gt; <span class="cstat-no" title="statement not covered" >`</span>
+    template: (booking, user) =&gt; `
       &lt;h2&gt;Sua opinião é importante!&lt;/h2&gt;
       &lt;p&gt;Olá ${user.name},&lt;/p&gt;
       &lt;p&gt;O serviço foi realizado? Gostaríamos de saber sua opinião.&lt;/p&gt;
@@ -279,7 +279,7 @@ const emailTemplates = <span class="cstat-no" title="statement not covered" >{</
 &nbsp;
   invoiceTemplate: {
     subject: 'Sua Fatura - LimpezaPro',
-    template: <span class="fstat-no" title="function not covered" >(i</span>nvoice, user) =&gt; <span class="cstat-no" title="statement not covered" >`</span>
+    template: (invoice, user) =&gt; `
       &lt;h2&gt;Fatura #${invoice.id}&lt;/h2&gt;
       &lt;p&gt;Olá ${user.name},&lt;/p&gt;
       &lt;h3&gt;Detalhes da Fatura:&lt;/h3&gt;
@@ -295,7 +295,7 @@ const emailTemplates = <span class="cstat-no" title="statement not covered" >{</
 &nbsp;
   cancellationNotice: {
     subject: 'Agendamento Cancelado',
-    template: <span class="fstat-no" title="function not covered" >(b</span>ooking, user, reason) =&gt; <span class="cstat-no" title="statement not covered" >`</span>
+    template: (booking, user, reason) =&gt; `
       &lt;h2&gt;Agendamento Cancelado&lt;/h2&gt;
       &lt;p&gt;Olá ${user.name},&lt;/p&gt;
       &lt;p&gt;Seu agendamento foi cancelado.&lt;/p&gt;
@@ -305,7 +305,7 @@ const emailTemplates = <span class="cstat-no" title="statement not covered" >{</
   },
 };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >module.exports = emailTemplates;</span>
+module.exports = emailTemplates;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -313,7 +313,7 @@ const emailTemplates = <span class="cstat-no" title="statement not covered" >{</
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-01T22:47:31.491Z
+                at 2026-02-02T01:24:48.680Z
             </div>
         <script src="../prettify.js"></script>
         <script>
