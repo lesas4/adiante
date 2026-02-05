@@ -19,7 +19,7 @@ jest.mock('../../utils/logger', () => ({
   debug: jest.fn()
 }));
 
-const NewsletterController = require('../controllers/NewsletterController');
+const NewsletterController = require('../../controllers/NewsletterController');
 
 describe('NewsletterController', () => {
   describe('isValidEmail', () => {
