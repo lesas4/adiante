@@ -1,12 +1,12 @@
 {
-  "name": "Limpeza Pro",
-  "short_name": "Limpeza",
-  "description": "Plataforma profissional de agendamento de limpeza com segurança empresarial",
+  "name": "Leidy Cleaner - Limpeza Profissional",
+  "short_name": "Leidy Cleaner",
+  "description": "Serviços profissionais de limpeza residencial e comercial em Porto Alegre",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "theme_color": "#6366f1",
+  "theme_color": "#0891b2",
   "background_color": "#ffffff",
   "categories": ["business", "productivity"],
   "screenshots": [

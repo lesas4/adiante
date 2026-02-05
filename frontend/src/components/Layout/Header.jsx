@@ -16,12 +16,12 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700 shadow-md">
+    <header className="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700 shadow-md desktop-only">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20 sm:h-24">
           {/* Logo + Brand */}
           <Link href="/">
-            <a className="flex items-center gap-3 hover:opacity-80 transition-opacity group">
+            <div className="flex items-center gap-3 hover:opacity-80 transition-opacity group">
               <div className="relative w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-lg group-hover:shadow-xl transition-shadow">
                 🧹
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -34,17 +34,17 @@ export default function Header() {
                   Limpeza Profissional Premium
                 </p>
               </div>
-            </a>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-2">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href}>
-                <a className="px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-all font-medium flex items-center gap-2 group">
+                <div className="px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-all font-medium flex items-center gap-2 group">
                   <span className="group-hover:scale-125 transition-transform">{link.icon}</span>
                   {link.label}
-                </a>
+                </div>
               </Link>
             ))}
           </nav>
@@ -53,10 +53,10 @@ export default function Header() {
           <div className="flex items-center gap-3 sm:gap-4">
             <ThemeSelector />
             <Link href="/agendar">
-              <a className="hidden sm:inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:shadow-lg hover:scale-105 transition-all font-bold text-sm shadow-md">
+              <div className="hidden sm:inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:shadow-lg hover:scale-105 transition-all font-bold text-sm shadow-md">
                 <span>📅</span>
                 Agendar
-              </a>
+              </div>
             </Link>
 
             {/* Mobile Menu Toggle */}
@@ -78,22 +78,22 @@ export default function Header() {
           <nav className="lg:hidden pb-4 space-y-2 border-t border-gray-200 dark:border-slate-700 pt-4 animate-in fade-in slide-up">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href}>
-                <a 
+                <div 
                   className="block px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg transition-colors font-medium flex items-center gap-2"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <span>{link.icon}</span>
                   {link.label}
-                </a>
+                </div>
               </Link>
             ))}
             <Link href="/agendar">
-              <a 
+              <div 
                 className="block px-4 py-3 mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg font-bold text-center hover:shadow-lg transition-all"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Agendar Agora
-              </a>
+              </div>
             </Link>
           </nav>
         )}

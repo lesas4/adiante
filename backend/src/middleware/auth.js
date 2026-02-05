@@ -44,17 +44,15 @@ const authenticateToken = (req, res, next) => {
 
   try {
     // ✅ CORRIGIDO: Verificar token com JWT real
-    const decoded = jwt.verify(
-      token,
-      JWT_SECRET
-    );
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
     next();
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({ error: 'Token expirado. Faça login novamente.' });
     }
-    res.status(403).json({ error: 'Token inválido ou expirado' });
+    // Para tokens malformados ou inválidos, retornar 401 (Unauthorized)
+    return res.status(401).json({ error: 'Token inválido ou ausente' });
   }
 };
 
@@ -70,9 +68,16 @@ const authorizeRole = (roles) => {
   };
 };
 
+// Compatibilidade: permitir chamada antiga requireRole('admin')
+const requireRole = (roleOrRoles) => {
+  const roles = Array.isArray(roleOrRoles) ? roleOrRoles : [roleOrRoles];
+  return authorizeRole(roles);
+};
+
 module.exports = {
   authenticateToken,
   authorizeRole,
   generateToken,     // ✅ NOVO
   generateRefreshToken, // ✅ NOVO
+  requireRole, // compat
 };

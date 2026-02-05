@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
+import { RecurringScheduler } from '../components/UI/RecurringScheduler';
 
 /**
  * Página de Agendamento - Formulário interativo em 4 passos
@@ -18,6 +19,7 @@ export default function Agendar() {
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isRecurring, setIsRecurring] = useState(false);
 
   const services = [
     { id: 1, name: 'Limpeza Residencial', price: 150, icon: '🏠', duration: '2-3h' },
@@ -92,14 +94,14 @@ export default function Agendar() {
               </div>
               <div className="flex gap-4 justify-center">
                 <Link href="/">
-                  <a className="px-8 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold hover:shadow-lg transition-all">
+                  <div className="px-8 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold hover:shadow-lg transition-all">
                     ← Voltar ao Home
-                  </a>
+                  </div>
                 </Link>
                 <Link href="/servicos">
-                  <a className="px-8 py-3 rounded-lg bg-gray-200 dark:bg-slate-800 text-gray-900 dark:text-white font-bold hover:shadow-lg transition-all">
+                  <div className="px-8 py-3 rounded-lg bg-gray-200 dark:bg-slate-800 text-gray-900 dark:text-white font-bold hover:shadow-lg transition-all">
                     Ver Serviços →
-                  </a>
+                  </div>
                 </Link>
               </div>
             </div>
@@ -230,6 +232,34 @@ export default function Agendar() {
                       </p>
                     </div>
                   )}
+
+                  {/* Recurring Scheduling Option */}
+                  <div className="mt-8 p-6 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-slate-800 dark:to-slate-700 rounded-xl border border-purple-200 dark:border-slate-600">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                          🔄 Agendamento Recorrente
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Economize tempo com limpeza programada automaticamente
+                        </p>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={isRecurring}
+                          onChange={(e) => setIsRecurring(e.target.checked)}
+                          className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                      </label>
+                    </div>
+                    {isRecurring && (
+                      <div className="mt-4">
+                        <RecurringScheduler />
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 

@@ -55,12 +55,15 @@ class TwoFactorAuth {
       const backupCodes = this.generateBackupCodes();
 
       // Salvar como "pending" (não ativado ainda)
+      const { encrypt } = require('../utils/crypto');
+      const encSecret = encrypt(secret.base32);
+      const encBackup = encrypt(JSON.stringify(backupCodes));
       await db.run(
         `UPDATE users 
          SET two_fa_pending = ?, two_fa_backup_codes = ?
          WHERE id = ?`,
-        secret.base32,
-        JSON.stringify(backupCodes),
+        encSecret,
+        encBackup,
         userId
       );
 
@@ -83,6 +86,7 @@ class TwoFactorAuth {
    */
   static async confirmTwoFactor(userId, token) {
     try {
+      const { decrypt } = require('../utils/crypto');
       const user = await db.get(
         'SELECT two_fa_pending FROM users WHERE id = ?',
         userId
@@ -92,12 +96,14 @@ class TwoFactorAuth {
         return { success: false, error: '2FA não foi iniciado' };
       }
 
+      const decSecret = decrypt(user.two_fa_pending);
       // Verificar token
-      if (!this.verify(user.two_fa_pending, token)) {
+      if (!decSecret || !this.verify(decSecret, token)) {
         return { success: false, error: 'Token inválido' };
       }
 
       // Ativar 2FA
+      // Mover pending -> secret (mantendo encriptado)
       await db.run(
         `UPDATE users 
          SET two_fa_secret = ?, two_fa_enabled = 1, two_fa_pending = NULL
@@ -123,6 +129,7 @@ class TwoFactorAuth {
    */
   static async verifyLogin2FA(userId, token, useBackupCode = false) {
     try {
+      const { decrypt } = require('../utils/crypto');
       const user = await db.get(
         'SELECT two_fa_secret, two_fa_backup_codes FROM users WHERE id = ?',
         userId
@@ -133,24 +140,27 @@ class TwoFactorAuth {
       }
 
       if (useBackupCode) {
-        // Verificar backup code
-        const backupCodes = JSON.parse(user.two_fa_backup_codes || '[]');
+        // Verificar backup code (descriptografar)
+        const decBackup = decrypt(user.two_fa_backup_codes || '');
+        const backupCodes = decBackup ? JSON.parse(decBackup) : [];
         if (!backupCodes.includes(token)) {
           return { success: false, error: 'Código de backup inválido' };
         }
 
         // Remover código usado
         const newCodes = backupCodes.filter(code => code !== token);
+        const { encrypt } = require('../utils/crypto');
         await db.run(
           'UPDATE users SET two_fa_backup_codes = ? WHERE id = ?',
-          JSON.stringify(newCodes),
+          encrypt(JSON.stringify(newCodes)),
           userId
         );
 
         logger.warn('Backup code used', { userId });
       } else {
-        // Verificar TOTP token
-        if (!this.verify(user.two_fa_secret, token)) {
+        // Verificar TOTP token (descriptografar secret)
+        const decSecret = decrypt(user.two_fa_secret);
+        if (!decSecret || !this.verify(decSecret, token)) {
           return { success: false, error: 'Token 2FA inválido' };
         }
       }

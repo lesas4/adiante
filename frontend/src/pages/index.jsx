@@ -5,6 +5,9 @@ import AOS from 'aos'
 import 'aos/dist/aos.css'
 import Header from '../components/Layout/Header'
 import Footer from '../components/Layout/Footer'
+import PriceCalculator from '../components/UI/PriceCalculator'
+import FAQ from '../components/UI/FAQ'
+import BlogSection from '../components/UI/BlogSection'
 
 export default function Home() {
   useEffect(() => {
@@ -60,9 +63,59 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Leidy Cleaner - Limpeza Profissional em Porto Alegre | Servicos Premium</title>
-        <meta name="description" content="Servicos de limpeza profissional com profissionais verificados, precos transparentes e agendamento online. Atendimento em Porto Alegre." />
+        <title>Leidy Cleaner - Limpeza Profissional em Porto Alegre | Serviços Premium</title>
+        <meta name="description" content="Limpeza profissional residencial e comercial em Porto Alegre. Serviços premium com profissionais verificados, produtos eco-friendly e garantia de satisfação. Agende online!" />
+        <meta name="keywords" content="limpeza profissional Porto Alegre, diarista, faxina, limpeza residencial, limpeza comercial, limpeza pós obra, produtos ecofriendly" />
+        <meta name="author" content="Leidy Cleaner" />
+        <meta name="robots" content="index, follow" />
+        <meta name="language" content="pt-BR" />
+        <meta name="revisit-after" content="7 days" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://leidycleaner.com/" />
+        <meta property="og:title" content="Leidy Cleaner - Limpeza Profissional em Porto Alegre" />
+        <meta property="og:description" content="Limpeza profissional residencial e comercial em Porto Alegre. Serviços premium com profissionais verificados." />
+        <meta property="og:image" content="https://leidycleaner.com/og-image.jpg" />
+
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://leidycleaner.com/" />
+        <meta property="twitter:title" content="Leidy Cleaner - Limpeza Profissional em Porto Alegre" />
+        <meta property="twitter:description" content="Limpeza profissional residencial e comercial em Porto Alegre. Serviços premium com profissionais verificados." />
+        <meta property="twitter:image" content="https://leidycleaner.com/og-image.jpg" />
+
+        {/* Local Business Schema */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "LocalBusiness",
+            "name": "Leidy Cleaner",
+            "description": "Serviços profissionais de limpeza residencial e comercial em Porto Alegre",
+            "url": "https://leidycleaner.com",
+            "telephone": "+55-51-98030-3740",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Porto Alegre",
+              "addressRegion": "RS",
+              "addressCountry": "BR"
+            },
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": "-30.0346",
+              "longitude": "-51.2177"
+            },
+            "openingHours": "Mo-Su 08:00-18:00",
+            "priceRange": "$$",
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.9",
+              "reviewCount": "500"
+            },
+            "serviceType": ["Limpeza Residencial", "Limpeza Comercial", "Limpeza Profunda"]
+          })}
+        </script>
       </Head>
 
       <div className="min-h-screen flex flex-col bg-white dark:bg-slate-900">
@@ -88,16 +141,16 @@ export default function Home() {
 
                   <div className="flex flex-col sm:flex-row gap-4 pt-4">
                     <Link href="/agendar">
-                      <a className="bg-white text-blue-600 font-bold py-4 px-8 rounded-lg hover:bg-gray-100 transition-all text-center text-lg shadow-xl hover:shadow-2xl inline-flex items-center justify-center gap-2">
+                      <div className="bg-white text-blue-600 font-bold py-4 px-8 rounded-lg hover:bg-gray-100 transition-all text-center text-lg shadow-xl hover:shadow-2xl inline-flex items-center justify-center gap-2">
                         <span>📅</span>
                         Agendar Limpeza
-                      </a>
+                      </div>
                     </Link>
                     <Link href="/servicos">
-                      <a className="border-2 border-white text-white font-bold py-4 px-8 rounded-lg hover:bg-white/10 transition-all text-center text-lg inline-flex items-center justify-center gap-2">
+                      <div className="border-2 border-white text-white font-bold py-4 px-8 rounded-lg hover:bg-white/10 transition-all text-center text-lg inline-flex items-center justify-center gap-2">
                         <span>✨</span>
                         Ver Servicos
-                      </a>
+                      </div>
                     </Link>
                   </div>
 
@@ -183,6 +236,25 @@ export default function Home() {
             </div>
           </section>
 
+          {/* Price Calculator Section */}
+          <section className="py-20 sm:py-32 bg-gray-50 dark:bg-slate-900">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="max-w-4xl mx-auto">
+                <div className="text-center mb-12" data-aos="fade-up">
+                  <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                    Calcule Seu Orçamento
+                  </h2>
+                  <p className="text-xl text-gray-600 dark:text-gray-400">
+                    Descubra o valor exato do seu serviço de limpeza
+                  </p>
+                </div>
+                <div data-aos="fade-up" data-aos-delay="200">
+                  <PriceCalculator />
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* Why Choose Us */}
           <section className="bg-blue-50 dark:bg-slate-800 py-20 sm:py-32">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -223,6 +295,60 @@ export default function Home() {
                         {item.desc}
                       </p>
                     </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Advanced Features */}
+          <section className="py-20 sm:py-32 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-slate-900 dark:to-slate-800">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-16" data-aos="fade-up">
+                <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                  ✨ Recursos Avançados
+                </h2>
+                <p className="text-xl text-gray-600 dark:text-gray-400">
+                  Tecnologia de ponta para uma experiência excepcional
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {[
+                  {
+                    icon: '🎫',
+                    title: 'Cupons Exclusivos',
+                    desc: 'Ganhe descontos especiais em cada serviço realizado'
+                  },
+                  {
+                    icon: '🔄',
+                    title: 'Agendamento Recorrente',
+                    desc: 'Configure limpezas automáticas semanais ou mensais'
+                  },
+                  {
+                    icon: '⭐',
+                    title: 'Programa de Fidelidade',
+                    desc: 'Acumule pontos e troque por serviços gratuitos'
+                  },
+                  {
+                    icon: '🔔',
+                    title: 'Notificações Inteligentes',
+                    desc: 'Lembretes automáticos e atualizações em tempo real'
+                  }
+                ].map((feature, i) => (
+                  <div
+                    key={i}
+                    className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all hover:scale-105"
+                    data-aos="fade-up"
+                    data-aos-delay={i * 100}
+                  >
+                    <div className="text-4xl mb-4">{feature.icon}</div>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                      {feature.title}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      {feature.desc}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -330,18 +456,32 @@ export default function Home() {
                       ))}
                     </ul>
                     <Link href="/agendar">
-                      <a className={`w-full py-3 rounded-lg font-bold transition-colors text-center inline-flex items-center justify-center gap-2 ${
+                      <div className={`w-full py-3 rounded-lg font-bold transition-colors text-center inline-flex items-center justify-center gap-2 ${
                         plan.featured
                           ? 'bg-white text-blue-600 hover:bg-gray-100'
                           : 'bg-blue-600 text-white hover:bg-blue-700'
                       }`}>
                         <span>📅</span>
                         Agendar Agora
-                      </a>
+                      </div>
                     </Link>
                   </div>
                 ))}
               </div>
+            </div>
+          </section>
+
+          {/* FAQ Section */}
+          <section className="py-20 sm:py-32">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <FAQ />
+            </div>
+          </section>
+
+          {/* Blog Section */}
+          <section className="py-20 sm:py-32 bg-gray-50 dark:bg-slate-900">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <BlogSection />
             </div>
           </section>
 
@@ -355,11 +495,11 @@ export default function Home() {
                 Agora e a hora. Agende sua primeira limpeza e receba 10% de desconto.
               </p>
               <Link href="/agendar">
-                <a className="inline-flex items-center gap-3 bg-white text-blue-600 font-bold py-4 px-12 rounded-lg hover:bg-gray-100 transition-colors text-lg shadow-xl hover:shadow-2xl hover:scale-105">
+                <div className="inline-flex items-center gap-3 bg-white text-blue-600 font-bold py-4 px-12 rounded-lg hover:bg-gray-100 transition-colors text-lg shadow-xl hover:shadow-2xl hover:scale-105">
                   <span className="text-2xl">✨</span>
                   Agendar Primeira Limpeza
                   <span className="text-2xl">→</span>
-                </a>
+                </div>
               </Link>
             </div>
           </section>

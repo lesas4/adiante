@@ -133,39 +133,108 @@ class PixService {
   }
 
   /**
-   * Gerar BRCode manualmente (formato ABNT)
-   * Simplificado - em produção usar biblioteca especializada
+   * Gerar BRCode completo seguindo padrão ABNT brasileiro
+   * Implementação completa sem dependências externas
    */
   static generateBRCode(data) {
     const { pixKey, amount, merchantName, merchantCity, description, orderId } = data;
     
-    // Formato: um formato bem simplificado
-    // Em produção usar: npm install brcode
-    const brCode = [
-      '00020126360014br.gov.bcb.pix',
-      '0136' + pixKey,
-      '52040000',
-      '5303986', // Código da moeda (986 = BRL)
-      '540' + String(Math.round(amount * 100)).padStart(10, '0'),
-      '60' + description.substring(0, 14),
-      '62' + orderId.substring(0, 25)
-    ].join('');
-
-    return brCode;
+    // ID do Payload Format Indicator
+    let payload = '000201';
+    
+    // Merchant Account Information
+    const merchantAccount = this.buildMerchantAccountInfo(pixKey);
+    payload += '26' + String(merchantAccount.length).padStart(2, '0') + merchantAccount;
+    
+    // Merchant Category Code (limpeza doméstica = 7230)
+    payload += '52047230';
+    
+    // Transaction Currency (986 = BRL)
+    payload += '5303986';
+    
+    // Transaction Amount
+    if (amount > 0) {
+      const amountStr = amount.toFixed(2);
+      payload += '54' + String(amountStr.length).padStart(2, '0') + amountStr;
+    }
+    
+    // Country Code
+    payload += '5802BR';
+    
+    // Merchant Name
+    const name = merchantName.substring(0, 25).toUpperCase();
+    payload += '59' + String(name.length).padStart(2, '0') + name;
+    
+    // Merchant City
+    const city = merchantCity.substring(0, 15).toUpperCase();
+    payload += '60' + String(city.length).padStart(2, '0') + city;
+    
+    // Additional Data Field
+    const additionalData = this.buildAdditionalDataField(description, orderId);
+    payload += '62' + String(additionalData.length).padStart(2, '0') + additionalData;
+    
+    // CRC16
+    const crc = this.calculateCRC16(payload + '6304');
+    payload += '6304' + crc;
+    
+    return payload;
   }
 
   /**
-   * Calcular hash para CRC16 (necessário para BRCode válido)
+   * Construir Merchant Account Information (ID 26)
    */
-  static calculateCRC16(str) {
+  static buildMerchantAccountInfo(pixKey) {
+    // GUI
+    let mai = '0014br.gov.bcb.pix';
+    
+    // Chave PIX
+    mai += '01' + String(pixKey.length).padStart(2, '0') + pixKey;
+    
+    return mai;
+  }
+
+  /**
+   * Construir Additional Data Field (ID 62)
+   */
+  static buildAdditionalDataField(description, orderId) {
+    let adf = '';
+    
+    // Reference Label (ID do pedido)
+    if (orderId) {
+      adf += '05' + String(orderId.length).padStart(2, '0') + orderId;
+    }
+    
+    // Additional Data (descrição)
+    if (description) {
+      adf += '99' + String(description.length).padStart(2, '0') + description;
+    }
+    
+    return adf;
+  }
+
+  /**
+   * Calcular CRC16-CCITT (padrão brasileiro para PIX)
+   * Polinômio: 0x1021, inicialização: 0xFFFF
+   */
+  static calculateCRC16(data) {
     let crc = 0xFFFF;
-    for (let i = 0; i < str.length; i++) {
-      crc ^= str.charCodeAt(i) << 8;
+    const polynomial = 0x1021;
+    
+    for (let i = 0; i < data.length; i++) {
+      let byte = data.charCodeAt(i);
+      crc ^= (byte << 8);
+      
       for (let j = 0; j < 8; j++) {
-        crc = (crc << 1) ^ ((crc & 0x8000) ? 0x1021 : 0);
+        if (crc & 0x8000) {
+          crc = (crc << 1) ^ polynomial;
+        } else {
+          crc <<= 1;
+        }
+        crc &= 0xFFFF; // Manter 16 bits
       }
     }
-    return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+    
+    return crc.toString(16).toUpperCase().padStart(4, '0');
   }
 }
 

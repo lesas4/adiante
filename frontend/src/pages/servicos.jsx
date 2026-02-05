@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
+import { CouponSystem } from '../components/UI/CouponSystem';
 
 /**
  * Página de Serviços - Gallery com cartões premium
@@ -118,6 +119,19 @@ export default function Servicos() {
           </div>
         </section>
 
+        {/* Coupon Section */}
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              🎫 Ofertas Especiais
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400">
+              Aproveite nossos cupons de desconto exclusivos
+            </p>
+          </div>
+          <CouponSystem />
+        </section>
+
         {/* Services Grid */}
         <section className="container mx-auto px-4 sm:px-6 lg:px-8 pb-20">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -166,9 +180,9 @@ export default function Servicos() {
 
                   {/* CTA Button */}
                   <Link href="/agendar">
-                    <a className="block w-full py-3 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold text-center hover:shadow-lg hover:scale-105 transition-all">
+                    <div className="block w-full py-3 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold text-center hover:shadow-lg hover:scale-105 transition-all">
                       Agendar Serviço
-                    </a>
+                    </div>
                   </Link>
                 </div>
 
@@ -215,10 +229,10 @@ export default function Servicos() {
 
             <div className="text-center mt-8">
               <Link href="/agendar">
-                <a className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold hover:shadow-lg hover:scale-105 transition-all">
+                <div className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold hover:shadow-lg hover:scale-105 transition-all">
                   <span>💬</span>
                   Solicitar Orçamento Custom
-                </a>
+                </div>
               </Link>
             </div>
           </div>
@@ -257,10 +271,10 @@ export default function Servicos() {
             Agende seu serviço agora e receba 10% de desconto na primeira limpeza
           </p>
           <Link href="/agendar">
-            <a className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold hover:shadow-lg hover:scale-105 transition-all">
+            <div className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold hover:shadow-lg hover:scale-105 transition-all">
               <span>📅</span>
               Agendar Agora
-            </a>
+            </div>
           </Link>
         </section>
       </main>

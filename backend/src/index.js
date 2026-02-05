@@ -92,8 +92,6 @@ const apiLimiter = rateLimit({
   message: 'Limite de requisições API excedido'
 });
 
-// Aplicar rate limit globalmente
-app.use(limiter);
 
 // CORS com configuração mais segura
 const corsOptions = {
@@ -112,9 +110,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '..', '..', 'public')));
 
 // ===== ROUTES =====
-// ✅ CORRIGIDO: Aplicar rate limiters específicos nas rotas sensíveis
-app.use('/api/auth', authLimiter);  // Limiter rigoroso para autenticação
-app.use('/api', apiLimiter);        // Limiter padrão para API geral
+// Aplicar rate limiters apenas fora do ambiente de teste
+if (process.env.NODE_ENV !== 'test') {
+  app.use(limiter);
+  app.use('/api/auth', authLimiter);  // Limiter rigoroso para autenticação
+  app.use('/api', apiLimiter);        // Limiter padrão para API geral
+}
+
 app.use('/api', apiRoutes);
 app.use('/webhooks', webhookRoutes);
 app.use('/admin', adminRoutes);
@@ -158,15 +160,18 @@ app.use((err, req, res, next) => {
 // ===== INICIALIZAÇÃO =====
 const PORT = process.env.PORT || 3001;
 
-server.listen(PORT, () => {
-  logger.info(`🚀 Servidor rodando em http://localhost:${PORT}`);
-  // Inicializar scheduler automático
-  try {
-    Scheduler.init();
-    logger.info('Scheduler inicializado com sucesso');
-  } catch (err) {
-    logger.error('Erro ao inicializar scheduler', err);
-  }
-});
+// Não iniciar o servidor automaticamente durante os testes (evita handles abertos)
+if (process.env.NODE_ENV !== 'test') {
+  server.listen(PORT, () => {
+    logger.info(`🚀 Servidor rodando em http://localhost:${PORT}`);
+    // Inicializar scheduler automático
+    try {
+      Scheduler.init();
+      logger.info('Scheduler inicializado com sucesso');
+    } catch (err) {
+      logger.error('Erro ao inicializar scheduler', err);
+    }
+  });
+}
 
 module.exports = app;

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
+import { LoyaltyCard } from '../components/UI/LoyaltySystem';
+import ReferralSystem from '../components/UI/ReferralSystem';
 
 /**
  * Página Dashboard - Visualizar agendamentos e perfil
@@ -87,14 +89,14 @@ export default function Dashboard() {
         <header className="sticky top-0 z-40 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <Link href="/">
-              <a className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+              <div className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                 <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center text-white font-bold text-2xl">
                   🧹
                 </div>
                 <h1 className="text-2xl font-black bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
                   Leidy Cleaner
                 </h1>
-              </a>
+              </div>
             </Link>
             <button className="px-6 py-2 rounded-lg bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 font-bold hover:bg-red-200 dark:hover:bg-red-900/30 transition-colors">
               Sair
@@ -168,6 +170,26 @@ export default function Dashboard() {
                 }`}
               >
                 👤 Meu Perfil
+              </button>
+              <button
+                onClick={() => setActiveTab('referrals')}
+                className={`px-6 py-3 font-bold border-b-2 transition-all ${
+                  activeTab === 'referrals'
+                    ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                🎁 Indicações
+              </button>
+              <button
+                onClick={() => setActiveTab('loyalty')}
+                className={`px-6 py-3 font-bold border-b-2 transition-all ${
+                  activeTab === 'loyalty'
+                    ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                ⭐ Programa de Fidelidade
               </button>
             </div>
           </div>
@@ -246,9 +268,9 @@ export default function Dashboard() {
                   ))}
 
                   <Link href="/agendar">
-                    <a className="block w-full px-8 py-4 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold text-center hover:shadow-lg hover:scale-105 transition-all">
+                    <div className="block w-full px-8 py-4 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold text-center hover:shadow-lg hover:scale-105 transition-all">
                       + Agendar Novo Serviço
-                    </a>
+                    </div>
                   </Link>
                 </>
               ) : (
@@ -261,10 +283,10 @@ export default function Dashboard() {
                     Você ainda não tem nenhum agendamento. Faça seu primeiro agora!
                   </p>
                   <Link href="/agendar">
-                    <a className="inline-flex items-center gap-2 px-8 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold hover:shadow-lg transition-all">
+                    <div className="inline-flex items-center gap-2 px-8 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold hover:shadow-lg transition-all">
                       <span>📅</span>
                       Agendar Serviço
-                    </a>
+                    </div>
                   </Link>
                 </div>
               )}
@@ -366,6 +388,26 @@ export default function Dashboard() {
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* Referrals Tab */}
+          {activeTab === 'referrals' && (
+            <ReferralSystem />
+          )}
+
+          {/* Loyalty Tab */}
+          {activeTab === 'loyalty' && (
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                  🎉 Programa de Fidelidade Leidy Cleaner
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Ganhe pontos a cada serviço e troque por descontos exclusivos
+                </p>
+              </div>
+              <LoyaltyCard />
             </div>
           )}
         </div>

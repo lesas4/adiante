@@ -71,7 +71,7 @@ router.post('/auth/refresh', (req, res) => {
 
 router.get('/auth/verify', authenticateToken, (req, res) => {
   // retornar informações do usuário a partir do token
-  res.json({ success: true, user: req.user });
+  res.json({ success: true, userId: req.user.userId, user: req.user });
 });
 
 router.post('/auth/logout', authenticateToken, (req, res) => {
@@ -112,6 +112,11 @@ router.get('/payments/:userId', authenticateToken, (req, res) => {
 
 router.post('/refunds', authenticateToken, authorizeRole(['admin']), (req, res) => {
   PaymentController.processRefund(req, res);
+});
+
+// PIX Payments
+router.get('/payments/pix/:pixTransactionId', authenticateToken, (req, res) => {
+  PaymentController.verifyPixPayment(req, res);
 });
 
 // ===== REVIEWS =====

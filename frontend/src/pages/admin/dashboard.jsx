@@ -1,14 +1,14 @@
 import React from 'react';
 import Header from '../../components/Layout/Header';
 import Footer from '../../components/Layout/Footer';
-import AdminPanel from '../../components/Dashboard/AdminPanel';
+import { AdminDashboard } from '../../components/UI/AdminDashboard';
 
 export default function Admin() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow">
-        <AdminPanel />
+        <AdminDashboard />
       </main>
       <Footer />
     </div>

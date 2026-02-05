@@ -7,6 +7,7 @@
 const crypto = require('crypto');
 const db = require('../db'); // ✅ CORRIGIDO: Usar pool de conexões centralizado
 const StripeService = require('../services/StripeService');
+const PixService = require('../services/PixService');
 const logger = require('../utils/logger');
 const sanitizeHtml = require('sanitize-html');
 
@@ -17,7 +18,7 @@ class PaymentController {
    */
   static async processPayment(req, res) {
     try {
-      const { bookingId, amount, paymentMethod, userId } = req.body;
+      const { bookingId, amount, paymentMethod, userId, paymentType } = req.body;
 
       // ✅ CORRIGIDO: Validação robusta
       if (!bookingId || !amount || !paymentMethod || !userId) {
@@ -64,46 +65,144 @@ class PaymentController {
         });
       }
 
-      // Processar pagamento via StripeService
-      const paymentResult = await StripeService.processPayment(paymentMethod, validAmount, sanitizedBookingId);
+      let paymentResult;
 
-      if (!paymentResult.success) {
-        logger.error('Payment processing failed', { bookingId: sanitizedBookingId, error: paymentResult.error });
-        return res.status(402).json({ 
-          error: 'Payment processing failed',
-          code: 'PAYMENT_FAILED'
+      // Processar pagamento baseado no tipo
+      if (paymentType === 'pix') {
+        // Gerar QR Code PIX
+        paymentResult = await PixService.generateQRCode(
+          validAmount, 
+          sanitizedBookingId, 
+          `Agendamento ${sanitizedBookingId} - Limpeza Profissional`
+        );
+
+        if (!paymentResult.success) {
+          logger.error('PIX generation failed', { bookingId: sanitizedBookingId, error: paymentResult.error });
+          return res.status(402).json({ 
+            error: 'PIX generation failed',
+            code: 'PIX_GENERATION_FAILED'
+          });
+        }
+
+        // Salvar transação PIX
+        const transactionId = crypto.randomUUID();
+        await db.run(
+          `INSERT INTO transactions (id, booking_id, user_id, amount, payment_method, status, pix_transaction_id, created_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
+          transactionId, sanitizedBookingId, userId, validAmount, 'pix', 'pending', paymentResult.pixTransactionId
+        );
+
+        return res.json({
+          success: true,
+          paymentType: 'pix',
+          pixData: {
+            qrCode: paymentResult.brCode,
+            transactionId: paymentResult.pixTransactionId,
+            expiresAt: paymentResult.expiresAt,
+            amount: validAmount
+          },
+          message: 'PIX QR Code generated successfully'
+        });
+
+      } else {
+        // Processar pagamento via Stripe (cartão)
+        paymentResult = await StripeService.processPayment(paymentMethod, validAmount, sanitizedBookingId);
+
+        if (!paymentResult.success) {
+          logger.error('Payment processing failed', { bookingId: sanitizedBookingId, error: paymentResult.error });
+          return res.status(402).json({ 
+            error: 'Payment processing failed',
+            code: 'PAYMENT_FAILED'
+          });
+        }
+
+        // ✅ CORRIGIDO: Salvar transação com validação
+        const transactionId = crypto.randomUUID();
+        await db.run(
+          `INSERT INTO transactions (id, booking_id, user_id, amount, payment_method, status, stripe_id, last_four, created_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
+          transactionId, sanitizedBookingId, userId, validAmount, 'stripe', paymentResult.status, paymentResult.id, paymentResult.last4
+        );
+
+        // ✅ CORRIGIDO: Atualizar status do agendamento
+        await db.run(
+          'UPDATE bookings SET status = ?, paid = ? WHERE id = ?',
+          'confirmed', 1, sanitizedBookingId
+        );
+
+        // ✅ CORRIGIDO: Buscar transação criada
+        const transaction = await db.get('SELECT * FROM transactions WHERE id = ?', transactionId);
+
+        logger.info('Payment processed successfully', { transactionId, bookingId: sanitizedBookingId, amount: validAmount });
+        
+        res.json({ 
+          success: true, 
+          transaction,
+          message: 'Payment processed successfully'
         });
       }
-
-      // ✅ CORRIGIDO: Salvar transação com validação
-      const transactionId = crypto.randomUUID();
-      await db.run(
-        `INSERT INTO transactions (id, booking_id, user_id, amount, payment_method, status, stripe_id, last_four, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
-        transactionId, sanitizedBookingId, userId, validAmount, 'stripe', paymentResult.status, paymentResult.id, paymentResult.last4
-      );
-
-      // ✅ CORRIGIDO: Atualizar status do agendamento
-      await db.run(
-        'UPDATE bookings SET status = ?, paid = ? WHERE id = ?',
-        'confirmed', 1, sanitizedBookingId
-      );
-
-      // ✅ CORRIGIDO: Buscar transação criada
-      const transaction = await db.get('SELECT * FROM transactions WHERE id = ?', transactionId);
-
-      logger.info('Payment processed successfully', { transactionId, bookingId: sanitizedBookingId, amount: validAmount });
-      
-      res.json({ 
-        success: true, 
-        transaction,
-        message: 'Payment processed successfully'
-      });
     } catch (error) {
       logger.error('Payment processing error', error);
       res.status(500).json({ 
         error: 'Internal server error',
         code: 'PAYMENT_ERROR'
+      });
+    }
+  }
+
+  /**
+   * Verificar status do pagamento PIX
+   */
+  static async verifyPixPayment(req, res) {
+    try {
+      const { pixTransactionId } = req.params;
+
+      if (!pixTransactionId) {
+        return res.status(400).json({ error: 'PIX transaction ID required', code: 'INVALID_REQUEST' });
+      }
+
+      const result = await PixService.verifyPayment(pixTransactionId);
+
+      if (!result.success) {
+        return res.status(404).json({ error: result.error, code: 'PIX_NOT_FOUND' });
+      }
+
+      // Se pagamento foi confirmado, atualizar transação
+      if (result.status === 'paid') {
+        // Buscar transação relacionada
+        const transaction = await db.get(
+          'SELECT * FROM transactions WHERE pix_transaction_id = ?',
+          pixTransactionId
+        );
+
+        if (transaction && transaction.status !== 'completed') {
+          // Atualizar status da transação
+          await db.run(
+            'UPDATE transactions SET status = ? WHERE id = ?',
+            'completed', transaction.id
+          );
+
+          // Atualizar booking
+          await db.run(
+            'UPDATE bookings SET status = ?, paid = ? WHERE id = ?',
+            'confirmed', 1, transaction.booking_id
+          );
+
+          logger.info('PIX payment verified and confirmed', { pixTransactionId, transactionId: transaction.id });
+        }
+      }
+
+      res.json({
+        success: true,
+        status: result.status,
+        amount: result.amount,
+        expiresAt: result.expiresAt
+      });
+    } catch (error) {
+      logger.error('PIX verification error', error);
+      res.status(500).json({ 
+        error: 'Internal server error',
+        code: 'PIX_VERIFICATION_ERROR'
       });
     }
   }

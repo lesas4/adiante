@@ -97,10 +97,10 @@ export default function Footer() {
             <h3 className="text-2xl sm:text-3xl font-bold mb-3">Pronto para Agendar?</h3>
             <p className="text-blue-100 mb-6 text-lg">Solicite um orçamento sem compromisso hoje mesmo</p>
             <Link href="/agendar">
-              <a className="inline-flex items-center gap-2 bg-white text-blue-600 px-8 py-4 rounded-lg font-bold hover:shadow-lg hover:scale-105 transition-all">
+              <div className="inline-flex items-center gap-2 bg-white text-blue-600 px-8 py-4 rounded-lg font-bold hover:shadow-lg hover:scale-105 transition-all">
                 <span>📅</span>
                 Agendar Agora
-              </a>
+              </div>
             </Link>
           </div>
         </div>
@@ -112,7 +112,7 @@ export default function Footer() {
           {/* Brand Column */}
           <div className="col-span-1 lg:col-span-2">
             <Link href="/">
-              <a className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity">
+              <div className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity">
                 <div className="relative w-14 h-14 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-lg">
                   🧹
                   <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -123,7 +123,7 @@ export default function Footer() {
                   </h4>
                   <p className="text-xs text-gray-600 dark:text-gray-400">Limpeza Premium</p>
                 </div>
-              </a>
+              </div>
             </Link>
             <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
               Especialista em limpeza profissional com técnicas modernas e produtos eco-friendly.
@@ -168,9 +168,9 @@ export default function Footer() {
                 {section.links.map((link) => (
                   <li key={link.href}>
                     <Link href={link.href}>
-                      <a className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:translate-x-1 transition-all inline-block">
+                      <span className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:translate-x-1 transition-all inline-block">
                         {link.label}
-                      </a>
+                      </span>
                     </Link>
                   </li>
                 ))}
