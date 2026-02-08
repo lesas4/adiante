@@ -40,6 +40,7 @@ class ThemeManager {
         return stored;
       }
     } catch (_e) {
+      // Silently continue on error
       // Local storage not available, use default
     }
     return THEMES.AUTO;
@@ -98,6 +99,7 @@ class ThemeManager {
       try {
         localStorage.setItem(THEME_KEY, theme);
       } catch (_e) {
+      // Silently continue on error
         // Storage quota exceeded or disabled, continue silently
       }
     }
@@ -106,6 +108,7 @@ class ThemeManager {
     try {
       document.cookie = `${THEME_KEY}=${encodeURIComponent(theme)}; path=/; max-age=${60 * 60 * 24 * 365}`;
     } catch (e) {
+      // Silently continue on error
       // ignore
     }
     

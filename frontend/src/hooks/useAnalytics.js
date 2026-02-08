@@ -30,6 +30,7 @@ export const useAnalytics = (dateRange = '30days') => {
 
       setData(response.data.data);
     } catch (err) {
+      // Silently continue on error
       setError(err.response?.data?.error || 'Failed to fetch analytics');
     } finally {
       setLoading(false);
@@ -52,6 +53,7 @@ export const useAnalytics = (dateRange = '30days') => {
 
       return response.data.data;
     } catch (err) {
+      // Silently continue on error
       throw err;
     }
   }, []);
@@ -68,6 +70,7 @@ export const useAnalytics = (dateRange = '30days') => {
 
       return response.data.data;
     } catch (err) {
+      // Silently continue on error
       throw err;
     }
   }, []);
@@ -84,6 +87,7 @@ export const useAnalytics = (dateRange = '30days') => {
 
       return response.data.data;
     } catch (err) {
+      // Silently continue on error
       throw err;
     }
   }, []);
@@ -100,6 +104,7 @@ export const useAnalytics = (dateRange = '30days') => {
 
       return response.data.data;
     } catch (err) {
+      // Silently continue on error
       throw err;
     }
   }, []);
@@ -120,6 +125,7 @@ export const useAnalytics = (dateRange = '30days') => {
 
       return response.data.data;
     } catch (err) {
+      // Silently continue on error
       throw err;
     }
   }, []);
@@ -144,6 +150,7 @@ export const useAnalytics = (dateRange = '30days') => {
       link.click();
       link.parentElement.removeChild(link);
     } catch (err) {
+      // Silently continue on error
       throw err;
     }
   }, [dateRange]);

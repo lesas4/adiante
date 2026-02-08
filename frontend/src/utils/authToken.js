@@ -18,6 +18,7 @@ export function getAuthToken() {
       return localStorage.getItem('auth_token') || localStorage.getItem('token');
     }
   } catch (e) {
+      // Silently continue on error
     return null;
   }
 

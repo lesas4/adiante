@@ -69,6 +69,7 @@ export const usePWA = () => {
       try {
         await navigator.share(data);
       } catch (error) {
+      // Silently continue on error
       }
     }
   };

@@ -16,6 +16,7 @@ export function getStoredPrefs() {
     const parsed = JSON.parse(raw);
     return { ...DEFAULTS, ...parsed };
   } catch (e) {
+      // Silently continue on error
     return DEFAULTS;
   }
 }
@@ -28,9 +29,11 @@ export function savePrefs(prefs) {
     try {
       document.cookie = `${PREF_KEY}=${encodeURIComponent(JSON.stringify(prefs))}; path=/; max-age=${60 * 60 * 24 * 365}`;
     } catch (e) {
+      // Silently continue on error
       // ignore
     }
   } catch (e) {
+      // Silently continue on error
     // ignore
   }
 }

@@ -18,6 +18,7 @@ export const useAsync = (asyncFunction, immediate = true) => {
       setStatus('success');
       return response;
     } catch (err) {
+      // Silently continue on error
       setError(err);
       setStatus('error');
     }
@@ -39,6 +40,7 @@ export const useLocalStorage = (key, initialValue) => {
       const item = typeof window !== 'undefined' ? window.localStorage?.getItem(key) : null;
       return item ? JSON.parse(item) : initialValue;
     } catch (err) {
+      // Silently continue on error
       return initialValue;
     }
   });
@@ -51,6 +53,7 @@ export const useLocalStorage = (key, initialValue) => {
         window.localStorage?.setItem(key, JSON.stringify(valueToStore));
       }
     } catch (err) {
+      // Silently continue on error
     }
   };
 
@@ -129,6 +132,7 @@ export const useForm = (initialValues, onSubmit) => {
     try {
       await onSubmit(values);
     } catch (err) {
+      // Silently continue on error
       setErrors(err.errors || {});
     } finally {
       setIsSubmitting(false);

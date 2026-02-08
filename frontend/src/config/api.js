@@ -40,6 +40,7 @@ export async function apiCall(endpoint, options = {}) {
     const { getAuthHeader } = require('../utils/authToken');
     Object.assign(headers, getAuthHeader());
   } catch (e) {
+      // Silently continue on error
     // ignore if helper not available in this environment
   }
 
@@ -72,6 +73,7 @@ export async function apiCall(endpoint, options = {}) {
 
     return data;
   } catch (err) {
+      // Silently continue on error
     clearTimeout(timeoutId);
 
     // Erro de timeout (AbortError)

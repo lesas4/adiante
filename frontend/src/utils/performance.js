@@ -190,6 +190,7 @@ export function useCache(key, ttl = 5 * 60 * 1000) { // 5 minutes default
 
       return parsed.data;
     } catch {
+      // Silently continue on error
       return null;
     }
   };
@@ -202,6 +203,7 @@ export function useCache(key, ttl = 5 * 60 * 1000) { // 5 minutes default
       };
       localStorage.setItem(key, JSON.stringify(item));
     } catch {
+      // Silently continue on error
       // Ignore storage errors
     }
   };
@@ -210,6 +212,7 @@ export function useCache(key, ttl = 5 * 60 * 1000) { // 5 minutes default
     try {
       localStorage.removeItem(key);
     } catch {
+      // Silently continue on error
       // Ignore errors
     }
   };
