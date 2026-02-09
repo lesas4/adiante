@@ -479,7 +479,73 @@ Qualquer dúvida, entre em contato! 📞`;
     schedule.scheduleJob('*/1 * * * *', () => {
       this.processQueue();
     });
+  }
 
+  /**
+   * Enviar pagamento link por WhatsApp
+   */
+  async sendPaymentLinkWhatsApp(phoneNumber, paymentDetails) {
+    const message = `
+💳 PAGAMENTO PENDENTE
+
+Serviço: ${paymentDetails.service}
+Valor: R$ ${paymentDetails.amount}
+
+Pagar agora: ${paymentDetails.paymentUrl}
+
+Qualquer dúvida: https://leidycleaner.com/contato
+    `.trim();
+
+    return this.sendWhatsApp(phoneNumber, message);
+  }
+
+  /**
+   * Enviar confirmação de pagamento
+   */
+  async sendPaymentConfirmationWhatsApp(phoneNumber, paymentDetails) {
+    const message = `
+✅ PAGAMENTO CONFIRMADO!
+
+${paymentDetails.hours}h de limpeza adicionadas à sua conta
+Valor: R$ ${paymentDetails.amount}
+
+Agendar serviço: https://leidycleaner.com/agendar
+    `.trim();
+
+    return this.sendWhatsApp(phoneNumber, message);
+  }
+
+  /**
+   * Enviar referral link
+   */
+  async sendReferralWhatsApp(phoneNumber, referralCode, referralLink) {
+    const message = `
+🎁 INDIQUE E GANHE!
+
+Seu código de referência: ${referralCode}
+
+Compartilhe com amigos:
+${referralLink}
+
+Você ganha R$ 50 por cada indicação! 💰
+    `.trim();
+
+    return this.sendWhatsApp(phoneNumber, message);
+  }
+
+  /**
+   * Enviar notificação de nova avaliação
+   */
+  async sendReviewNotification(phoneNumber, customerName, rating) {
+    const message = `
+⭐ NOVA AVALIAÇÃO
+
+Obrigada ${customerName}! Você nos avaliou com ${rating} ⭐
+
+Sua opinião é super importante para melhorarmos!
+    `.trim();
+
+    return this.sendWhatsApp(phoneNumber, message);
   }
 }
 

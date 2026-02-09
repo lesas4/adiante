@@ -16,6 +16,8 @@ const webhookRoutes = require('./routes/webhooks');
 const adminRoutes = require('./routes/admin');
 const Scheduler = require('./utils/scheduler');
 const ChatService = require('./services/ChatService');
+const MonitoringService = require('./services/MonitoringService');
+const HealthCheckService = require('./services/HealthCheckService');
 const logger = require('./utils/logger');
 const requestLoggingMiddleware = require('./middleware/requestLogging');
 const path = require('path');
@@ -48,6 +50,16 @@ const chatService = new ChatService(io);
 
 // Inicializar CSRF (gera cookie XSRF-TOKEN em GETs e valida POSTs)
 initCsrf(app);
+
+// Inicializar monitoramento (Sentry / NewRelic)
+try {
+  const monitoring = new MonitoringService();
+  monitoring.init(app);
+  // expor para uso em outros módulos se necessário
+  app.locals.monitoring = monitoring;
+} catch (err) {
+  logger.warn('Falha ao iniciar MonitoringService', err.message || err);
+}
 
 // ===== MIDDLEWARE =====
 // Segurança com Helmet (CSP + HSTS explícitos)
@@ -156,16 +168,48 @@ app.get('/health/db', async (req, res) => {
   }
 });
 
+// ===== QUEUE HEALTH =====
+app.get('/health/queue', async (req, res) => {
+  try {
+    const queueHealth = await HealthCheckService.checkEmailQueue();
+    if (queueHealth.status === 'healthy') {
+      res.json({ status: 'OK', queue: queueHealth, timestamp: new Date() });
+    } else if (queueHealth.status === 'degraded') {
+      res.status(206).json({ status: 'DEGRADED', queue: queueHealth, timestamp: new Date() });
+    } else {
+      res.status(500).json({ status: 'ERROR', queue: queueHealth, timestamp: new Date() });
+    }
+  } catch (err) {
+    logger.error('Health queue route error', err);
+    res.status(500).json({ status: 'ERROR', error: err.message });
+  }
+});
+
+// ===== FULL HEALTH =====
+app.get('/health/full', async (req, res) => {
+  try {
+    const full = await HealthCheckService.getFullHealthStatus();
+    res.json(full);
+  } catch (err) {
+    logger.error('Health full route error', err);
+    res.status(500).json({ status: 'ERROR', error: err.message });
+  }
+});
+
 // ===== SERVE SPA =====
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', '..', 'public', 'index.html'));
 });
 
 // ===== ERROR HANDLING =====
-app.use((err, req, res, next) => {
-  logger.error('Erro no middleware:', err);
-  res.status(500).json({ error: 'Erro interno do servidor' });
-});
+if (app.locals.monitoring && typeof app.locals.monitoring.setupErrorHandler === 'function') {
+  app.locals.monitoring.setupErrorHandler(app);
+} else {
+  app.use((err, req, res, next) => {
+    logger.error('Erro no middleware:', err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  });
+}
 
 // ===== QUEUE DASHBOARD (Bull Board) =====
 if (process.env.NODE_ENV !== 'production') {

@@ -339,6 +339,18 @@ router.get('/newsletter/stats', authenticateToken, authorizeRole(['admin']), (re
 const twoFactorRoutes = require('./twoFactorRoutes');
 router.use('/auth/2fa', twoFactorRoutes);
 
+// ===== CALENDAR & AVAILABILITY =====
+const availabilityRoutes = require('./availabilityRoutes');
+router.use('/availability', availabilityRoutes);
+
+// ===== REVIEWS & RATINGS =====
+const reviewRoutes = require('./reviewRoutes');
+router.use('/reviews', reviewRoutes);
+
+// ===== AFFILIATES & REFERRAL PROGRAM =====
+const affiliateRoutes = require('./affiliateRoutes');
+router.use('/affiliates', authenticateToken, affiliateRoutes);
+
 // ===== CHAT (Encrypted Messaging) =====
 router.post('/chat/messages', authenticateToken, (req, res) => {
   ChatController.sendEncryptedMessage(req, res);
@@ -548,6 +560,10 @@ router.use('/2fa', Advanced2FAController);
 // ===== STAFF AVAILABILITY - Real-time availability widget =====
 const staffAvailabilityRoutes = require('./staffAvailabilityRoutes');
 router.use('/staff', staffAvailabilityRoutes);
+
+// ===== BULL BOARD (fila dashboard) =====
+const bullBoardRoutes = require('./bullBoard');
+router.use('/admin/queues', authenticateToken, authorizeRole(['admin']), bullBoardRoutes);
 
 // ===== DYNAMIC PRICING =====
 const PricingController = require('../controllers/PricingController');
