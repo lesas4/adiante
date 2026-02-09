@@ -274,4 +274,81 @@ router.get('/dashboard', requireAdmin, async (req, res) => {
   }
 });
 
+/**
+ * GET /api/admin/revenue
+ * Relatório detalhado de faturamento
+ */
+router.get('/revenue', requireAdmin, async (req, res) => {
+  try {
+    const { period = 'month' } = req.query;
+    
+    let dateFilter = "strftime('%Y-%m', created_at) = strftime('%Y-%m', 'now')";
+    if (period === 'week') {
+      dateFilter = "datetime(created_at) >= datetime('now', '-7 days')";
+    } else if (period === 'year') {
+      dateFilter = "strftime('%Y', created_at) = strftime('%Y', 'now')";
+    }
+
+    const [data] = await db.all(
+      `SELECT 
+        DATE(created_at) as day,
+        COUNT(*) as bookings_count,
+        SUM(COALESCE(total_price, 0)) as daily_revenue
+      FROM bookings
+      WHERE status = 'completed' AND ${dateFilter}
+      GROUP BY DATE(created_at)
+      ORDER BY day DESC`
+    );
+
+    const totalRevenue = data.reduce((sum, r) => sum + (r.daily_revenue || 0), 0);
+    
+    res.json({
+      success: true,
+      period,
+      data,
+      summary: {
+        totalRevenue: Math.round(totalRevenue * 100) / 100,
+        daysTracked: data.length,
+        avgPerDay: data.length > 0 ? Math.round((totalRevenue / data.length) * 100) / 100 : 0
+      }
+    });
+  } catch (err) {
+    logger.error('Revenue report failed', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/admin/hour-sales
+ * Relatório de vendas de pacotes de horas
+ */
+router.get('/hour-sales', requireAdmin, async (req, res) => {
+  try {
+    const [sales] = await db.all(
+      `SELECT 
+        hours,
+        COUNT(*) as quantity_sold,
+        SUM(COALESCE(amount_paid, 0)) as total_revenue
+      FROM user_hour_credits
+      WHERE status = 'completed'
+      GROUP BY hours
+      ORDER BY hours ASC`
+    );
+
+    const totalRevenue = sales.reduce((sum, s) => sum + (s.total_revenue || 0), 0);
+    
+    res.json({
+      success: true,
+      sales,
+      summary: {
+        totalPackages: sales.reduce((sum, s) => sum + s.quantity_sold, 0),
+        totalRevenue: Math.round(totalRevenue * 100) / 100
+      }
+    });
+  } catch (err) {
+    logger.error('Hour sales report failed', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;

@@ -558,6 +558,10 @@ router.get('/pricing/simulate', (req, res) => {
   PricingController.simulatePriceOptions(req, res);
 });
 
+// ===== PAYMENTS (Stripe Integration) =====
+const paymentRoutes = require('./paymentRoutes');
+router.use('/payments', paymentRoutes);
+
 // ===== HOUR PACKAGING (Novos Endpoints Pagamento em Horas) =====
 const hourPricingRoutes = require('./hourPricingRoutes');
 router.use('/pricing', hourPricingRoutes);
