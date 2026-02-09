@@ -640,6 +640,17 @@ router.use('/cancellations', cancellationRoutes);
 const receiptRoutes = require('./receiptRoutes');
 router.use('/receipts', receiptRoutes);
 
+// ===== PIX PAYMENT =====
+const createPixRoutes = require('./pixRoutes');
+const pixRoutes = createPixRoutes(require('../db/sqlite').getDb());
+router.use('/pix', pixRoutes);
+
+// ===== ADMIN DASHBOARD =====
+const { getDb } = require('../db/sqlite');
+const createAdminDashboardRoutes = require('./adminDashboardRoutes');
+const adminDashboardRoutes = createAdminDashboardRoutes(getDb());
+router.use('/admin/dashboard', adminDashboardRoutes);
+
 module.exports = router;
 
 // ===== EXTRA FEATURES (6 Bonus Services) =====

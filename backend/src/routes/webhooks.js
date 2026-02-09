@@ -5,6 +5,7 @@
 
 const express = require('express');
 const router = express.Router();
+const pixWebhookRoutes = require('./pixWebhook.routes');
 
 /**
  * Webhook do Stripe
@@ -61,5 +62,10 @@ router.post('/google-calendar', (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
+
+/**
+ * Webhooks PIX - Pagamentos
+ */
+router.use('/pix', pixWebhookRoutes);
 
 module.exports = router;

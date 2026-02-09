@@ -98,12 +98,30 @@ CREATE TABLE IF NOT EXISTS payments (
   booking_id INTEGER NOT NULL UNIQUE,
   amount DECIMAL(10,2) NOT NULL,
   method TEXT DEFAULT 'stripe' CHECK(method IN ('stripe', 'pix', 'cash')),
-  status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'completed', 'failed')),
+  status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'completed', 'failed', 'waiting', 'received', 'confirmed', 'expired', 'processing')),
   stripe_id TEXT,
+  transaction_id TEXT UNIQUE,
+  qr_code LONGTEXT,
+  br_code VARCHAR(255),
+  pix_key VARCHAR(100),
+  webhook_response LONGTEXT,
+  confirmed_at DATETIME,
+  expires_at DATETIME,
+  user_id INTEGER,
+  payment_confirmed_at DATETIME,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (booking_id) REFERENCES bookings(id)
+  FOREIGN KEY (booking_id) REFERENCES bookings(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+-- ÍNDICES para performance nas queries de PIX
+CREATE INDEX IF NOT EXISTS idx_payments_transaction_id ON payments(transaction_id);
+CREATE INDEX IF NOT EXISTS idx_payments_user_id ON payments(user_id);
+CREATE INDEX IF NOT EXISTS idx_payments_booking_id ON payments(booking_id);
+CREATE INDEX IF NOT EXISTS idx_payments_status ON payments(status);
+CREATE INDEX IF NOT EXISTS idx_payments_method ON payments(method);
+CREATE INDEX IF NOT EXISTS idx_payments_created_at ON payments(created_at);
 
 -- TABELA: loyalty_history (rastreamento de bônus)
 CREATE TABLE IF NOT EXISTS loyalty_history (
@@ -168,6 +186,18 @@ CREATE TABLE IF NOT EXISTS chat_messages (
   FOREIGN KEY (booking_id) REFERENCES bookings(id),
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+-- TABELA: webhook_events (audit + idempotency para webhooks PIX)
+CREATE TABLE IF NOT EXISTS webhook_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_id TEXT NOT NULL UNIQUE,
+  source TEXT,
+  payload LONGTEXT,
+  signature VARCHAR(255),
+  received_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_webhook_events_event_id ON webhook_events(event_id);
 
 -- TABELA: booking_photos (fotos antes/depois)
 CREATE TABLE IF NOT EXISTS booking_photos (
