@@ -351,6 +351,18 @@ router.use('/reviews', reviewRoutes);
 const affiliateRoutes = require('./affiliateRoutes');
 router.use('/affiliates', authenticateToken, affiliateRoutes);
 
+// ===== PAYMENTS (Stripe) =====
+const paymentRoutes = require('./paymentRoutes');
+router.use('/payments', paymentRoutes);
+
+// ===== ADMIN PANEL =====
+const adminRoutes = require('./adminRoutes');
+router.use('/admin', adminRoutes);
+
+// ===== CHAT MESSAGES & HISTORY =====
+const chatMessagesRoutes = require('./chatMessagesRoutes');
+router.use('/chat', chatMessagesRoutes);
+
 // ===== CHAT (Encrypted Messaging) =====
 router.post('/chat/messages', authenticateToken, (req, res) => {
   ChatController.sendEncryptedMessage(req, res);
