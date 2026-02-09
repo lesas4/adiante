@@ -51,11 +51,13 @@ const HourCalculator = ({ onCalculate, userId }) => {
   const calculatePrice = async () => {
     try {
       setLoading(true);
+      const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+      
       const response = await fetch('/api/pricing/calculate-hours', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          ...(token && { Authorization: `Bearer ${token}` }),
         },
         body: JSON.stringify({
           hours: selectedHours,

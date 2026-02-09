@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import HourCalculator from '../Pricing/HourCalculator';
+import HourCalculator from '../components/Pricing/HourCalculator';
 
 const HourCheckout = () => {
   const [selectedPackage, setSelectedPackage] = useState(null);
@@ -20,9 +20,10 @@ const HourCheckout = () => {
 
   const fetchUserCredit = async () => {
     try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
       const response = await fetch('/api/pricing/user-hour-credit', {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          ...(token && { Authorization: `Bearer ${token}` }),
         },
       });
       const data = await response.json();
@@ -53,7 +54,7 @@ const HourCheckout = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${typeof window !== 'undefined' ? (localStorage.getItem('accessToken') || '') : ''}`,
         },
         body: JSON.stringify({
           packageHours: priceData.hours,
@@ -68,11 +69,12 @@ const HourCheckout = () => {
       }
 
       // 2. Processar pagamento (integra com PaymentController)
+      const token2 = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
       const paymentResponse = await fetch('/api/payments/process', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          ...(token2 && { Authorization: `Bearer ${token2}` }),
         },
         body: JSON.stringify({
           amount: priceData.finalPrice,
@@ -124,7 +126,7 @@ const HourCheckout = () => {
           <div className="lg:col-span-2">
             <HourCalculator
               onCalculate={handleCalculate}
-              userId={localStorage.getItem('userId')}
+              userId={typeof window !== 'undefined' ? localStorage.getItem('userId') : null}
             />
           </div>
 
