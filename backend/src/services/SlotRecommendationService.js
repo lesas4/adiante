@@ -1,12 +1,12 @@
 /**
- * [REDACTED_TOKEN].js
+ * SlotRecommendationService_Auto_226.js
  * Recomenda horários e staff baseado em rating, disponibilidade e preferências
  */
 
 const db = require('../db');
 const logger = require('../utils/logger');
 
-class [REDACTED_TOKEN] {
+class SlotRecommendationService_Auto_226 {
   /**
    * Recomendar slots para um serviço
    * Retorna os 5 melhores horários ordenados por: rating > preferência de horário > disponibilidade
@@ -114,7 +114,7 @@ class [REDACTED_TOKEN] {
    * Recomendar serviços complementares
    * Se agendou limpeza profunda, sugerir higiene de sofá, etc
    */
-  static async [REDACTED_TOKEN](serviceId) {
+  static async SlotRecommendationService_Auto_226(serviceId) {
     try {
       const service = await db.get('SELECT category FROM services WHERE id = ?', serviceId);
 
@@ -206,4 +206,4 @@ class [REDACTED_TOKEN] {
   }
 }
 
-module.exports = [REDACTED_TOKEN];
+module.exports = SlotRecommendationService_Auto_226;

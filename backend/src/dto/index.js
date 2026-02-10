@@ -94,7 +94,7 @@ class AuthResponseDto {
 /**
  * Booking DTOs
  */
-class [REDACTED_TOKEN] {
+class index_Auto_101 {
   constructor(professionalId, date, time, serviceId, amount = null) {
     this.professionalId = professionalId;
     this.date = date;
@@ -133,7 +133,7 @@ class BookingResponseDto {
 /**
  * Payment DTOs
  */
-class [REDACTED_TOKEN] {
+class index_Auto_101 {
   constructor(bookingId, amount) {
     this.bookingId = bookingId;
     this.amount = amount;
@@ -147,7 +147,7 @@ class [REDACTED_TOKEN] {
   }
 }
 
-class [REDACTED_TOKEN] {
+class index_Auto_101 {
   constructor(payment) {
     this.id = payment.id;
     this.transactionId = payment.transaction_id;
@@ -165,7 +165,7 @@ class [REDACTED_TOKEN] {
 /**
  * Review DTOs
  */
-class [REDACTED_TOKEN] {
+class index_Auto_101 {
   constructor(bookingId, rating, comment = null, photos = []) {
     this.bookingId = bookingId;
     this.rating = rating;
@@ -246,11 +246,11 @@ module.exports = {
   LoginRequestDto,
   RegisterRequestDto,
   AuthResponseDto,
-  [REDACTED_TOKEN],
+  index_Auto_101,
   BookingResponseDto,
-  [REDACTED_TOKEN],
-  [REDACTED_TOKEN],
-  [REDACTED_TOKEN],
+  index_Auto_101,
+  index_Auto_101,
+  index_Auto_101,
   ReviewResponseDto,
   ErrorResponseDto,
   dtoMiddleware

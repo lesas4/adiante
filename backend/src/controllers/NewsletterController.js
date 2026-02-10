@@ -7,7 +7,7 @@ const { getDb } = require('../db/sqlite');
 const EmailService = require('../services/EmailService');
 const logger = require('../utils/logger');
 
-class [REDACTED_TOKEN] {
+class NewsletterController_Auto_65 {
   /**
    * Inscrever email na newsletter
    * POST /api/newsletter/subscribe
@@ -35,7 +35,7 @@ class [REDACTED_TOKEN] {
       // Verificar se já existe
       const db = await getDb();
       const existing = await db.get(
-        'SELECT id FROM [REDACTED_TOKEN] WHERE email = ?',
+        'SELECT id FROM NewsletterController_Auto_65 WHERE email = ?',
         email
       );
 
@@ -51,7 +51,7 @@ class [REDACTED_TOKEN] {
       const subscribedAt = new Date().toISOString();
 
       await db.run(
-        `INSERT INTO [REDACTED_TOKEN] (id, email, name, status, subscribedAt, unsubscribedAt)
+        `INSERT INTO NewsletterController_Auto_65 (id, email, name, status, subscribedAt, unsubscribedAt)
          VALUES (?, ?, ?, ?, ?, ?)`,
         id,
         email.toLowerCase(),
@@ -64,7 +64,7 @@ class [REDACTED_TOKEN] {
       // Enviar email de confirmação
       try {
         const emailService = new EmailService();
-        await emailService.[REDACTED_TOKEN](email, name);
+        await emailService.NewsletterController_Auto_65(email, name);
         logger.info(`Newsletter subscription: ${email}`);
       } catch (emailError) {
         logger.warn(`Email envio falhou mas inscrição foi salva: ${email}`, emailError);
@@ -109,7 +109,7 @@ class [REDACTED_TOKEN] {
       
       // Verificar se existe
       const subscriber = await db.get(
-        'SELECT id FROM [REDACTED_TOKEN] WHERE email = ?',
+        'SELECT id FROM NewsletterController_Auto_65 WHERE email = ?',
         email.toLowerCase()
       );
 
@@ -123,7 +123,7 @@ class [REDACTED_TOKEN] {
       // Atualizar status
       const unsubscribedAt = new Date().toISOString();
       await db.run(
-        'UPDATE [REDACTED_TOKEN] SET status = ?, unsubscribedAt = ? WHERE email = ?',
+        'UPDATE NewsletterController_Auto_65 SET status = ?, unsubscribedAt = ? WHERE email = ?',
         'unsubscribed',
         unsubscribedAt,
         email.toLowerCase()
@@ -164,7 +164,7 @@ class [REDACTED_TOKEN] {
       
       const offset = (page - 1) * limit;
       
-      let query = 'SELECT * FROM [REDACTED_TOKEN]';
+      let query = 'SELECT * FROM NewsletterController_Auto_65';
       const params = [];
 
       if (status && status !== 'all') {
@@ -178,7 +178,7 @@ class [REDACTED_TOKEN] {
       const subscribers = await db.all(query, params);
 
       // Contar total
-      let countQuery = 'SELECT COUNT(*) as total FROM [REDACTED_TOKEN]';
+      let countQuery = 'SELECT COUNT(*) as total FROM NewsletterController_Auto_65';
       if (status && status !== 'all') {
         countQuery += ' WHERE status = ?';
       }
@@ -225,7 +225,7 @@ class [REDACTED_TOKEN] {
       
       // Obter todos os inscritos ativos
       const subscribers = await db.all(
-        'SELECT email, name FROM [REDACTED_TOKEN] WHERE status = ? ORDER BY subscribedAt DESC',
+        'SELECT email, name FROM NewsletterController_Auto_65 WHERE status = ? ORDER BY subscribedAt DESC',
         'active'
       );
 
@@ -286,21 +286,21 @@ class [REDACTED_TOKEN] {
       const db = await getDb();
 
       const totalActive = await db.get(
-        'SELECT COUNT(*) as count FROM [REDACTED_TOKEN] WHERE status = ?',
+        'SELECT COUNT(*) as count FROM NewsletterController_Auto_65 WHERE status = ?',
         'active'
       );
 
       const totalUnsubscribed = await db.get(
-        'SELECT COUNT(*) as count FROM [REDACTED_TOKEN] WHERE status = ?',
+        'SELECT COUNT(*) as count FROM NewsletterController_Auto_65 WHERE status = ?',
         'unsubscribed'
       );
 
       const totalAll = await db.get(
-        'SELECT COUNT(*) as count FROM [REDACTED_TOKEN]'
+        'SELECT COUNT(*) as count FROM NewsletterController_Auto_65'
       );
 
       const recentSubscribers = await db.all(
-        'SELECT email, name, subscribedAt FROM [REDACTED_TOKEN] WHERE status = ? ORDER BY subscribedAt DESC LIMIT 10',
+        'SELECT email, name, subscribedAt FROM NewsletterController_Auto_65 WHERE status = ? ORDER BY subscribedAt DESC LIMIT 10',
         'active'
       );
 
@@ -324,4 +324,4 @@ class [REDACTED_TOKEN] {
   }
 }
 
-module.exports = [REDACTED_TOKEN];
+module.exports = NewsletterController_Auto_65;

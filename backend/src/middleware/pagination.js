@@ -3,7 +3,7 @@
  * Adiciona suporte a paginação em endpoints de lista
  */
 
-const [REDACTED_TOKEN] = (req, res, next) => {
+const paginate = (req, res, next) => {
   // Parse limit (max 100 items per page)
   const limit = Math.min(parseInt(req.query.limit) || 20, 100);
 
@@ -34,7 +34,7 @@ const [REDACTED_TOKEN] = (req, res, next) => {
  * @param {Number} total - Total de itens na base
  * @param {Object} pagination - Objeto de paginação do middleware
  */
-const [REDACTED_TOKEN] = (data, total, pagination) => {
+const formatPagination = (data, total, pagination) => {
   const totalPages = Math.ceil(total / pagination.limit);
 
   return {
@@ -52,6 +52,6 @@ const [REDACTED_TOKEN] = (data, total, pagination) => {
 };
 
 module.exports = {
-  [REDACTED_TOKEN],
-  [REDACTED_TOKEN],
+  paginate,
+  formatPagination,
 };

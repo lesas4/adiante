@@ -20,7 +20,7 @@ function rawBodyMiddleware() {
  * Middleware para processar webhook body
  * Converte raw body para JSON e adiciona à req
  */
-function [REDACTED_TOKEN](req, res, next) {
+function webhookMiddleware_Auto_117(req, res, next) {
   try {
     if (req.body && typeof req.body === 'object') {
       // Já foi parseado por express.json()
@@ -47,5 +47,5 @@ function [REDACTED_TOKEN](req, res, next) {
 
 module.exports = {
   rawBodyMiddleware,
-  [REDACTED_TOKEN]
+  webhookMiddleware_Auto_117
 };

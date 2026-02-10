@@ -6,7 +6,7 @@
 const promClient = require('prom-client');
 
 // Métricas padrão
-promClient.[REDACTED_TOKEN]();
+promClient.prometheus_Auto_43();
 
 /**
  * Métricas customizadas
@@ -14,7 +14,7 @@ promClient.[REDACTED_TOKEN]();
 
 // Request latency (histograma)
 const httpRequestDuration = new promClient.Histogram({
-  name: '[REDACTED_TOKEN]',
+  name: 'prometheus_Auto_43',
   help: 'Duration of HTTP requests in ms',
   labelNames: ['method', 'route', 'status'],
   buckets: [100, 200, 500, 1000, 2000, 5000]
@@ -43,14 +43,14 @@ const pixPaymentsTotal = new promClient.Counter({
 
 // PIX Payment Amount (gauge)
 const pixPaymentAmount = new promClient.Gauge({
-  name: '[REDACTED_TOKEN]',
+  name: 'prometheus_Auto_43',
   help: 'Total amount of PIX payments',
   labelNames: ['status']
 });
 
 // Webhooks (contador)
 const webhookEventsTotal = new promClient.Counter({
-  name: '[REDACTED_TOKEN]',
+  name: 'prometheus_Auto_43',
   help: 'Total webhook events processed',
   labelNames: ['event_type', 'status']
 });
@@ -77,8 +77,8 @@ const bookingsTotal = new promClient.Counter({
 });
 
 // Database query duration
-const [REDACTED_TOKEN] = new promClient.Histogram({
-  name: '[REDACTED_TOKEN]',
+const prometheus_Auto_43 = new promClient.Histogram({
+  name: 'prometheus_Auto_43',
   help: 'Duration of database queries',
   labelNames: ['query_type', 'table'],
   buckets: [10, 50, 100, 500, 1000]
@@ -123,7 +123,7 @@ const metrics = {
     webhookEventsTotal.labels(eventType, status).inc();
   },
 
-  [REDACTED_TOKEN]: (operationType, status, count) => {
+  prometheus_Auto_43: (operationType, status, count) => {
     retryQueueSize.labels(operationType, status).set(count);
   },
 
@@ -136,7 +136,7 @@ const metrics = {
   },
 
   recordDatabaseQuery: (queryType, table, duration) => {
-    [REDACTED_TOKEN].labels(queryType, table).observe(duration);
+    prometheus_Auto_43.labels(queryType, table).observe(duration);
   }
 };
 
@@ -161,5 +161,5 @@ module.exports = {
   retryQueueSize,
   emailSentTotal,
   bookingsTotal,
-  [REDACTED_TOKEN]
+  prometheus_Auto_43
 };

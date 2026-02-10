@@ -5,7 +5,7 @@
 
 const db = require('../db');
 
-class [REDACTED_TOKEN] {
+class PublicReviewsController_Auto_77 {
   /**
    * Buscar avaliações públicas (para página de depoimentos)
    */
@@ -270,4 +270,4 @@ class [REDACTED_TOKEN] {
   }
 }
 
-module.exports = new [REDACTED_TOKEN]();
+module.exports = new PublicReviewsController_Auto_77();

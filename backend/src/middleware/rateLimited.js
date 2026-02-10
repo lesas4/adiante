@@ -18,7 +18,7 @@ const limiters = {
     maxRequests: 5,
     keyGenerator: (req) => req.user?.id || req.ip,
     message: 'Máximo 5 agendamentos por minuto. Tente novamente em breve.',
-    [REDACTED_TOKEN]: false,
+    skipSuccessfulRequests: false,
     skipFailedRequests: false
   }),
 
@@ -30,7 +30,7 @@ const limiters = {
     maxRequests: 5,
     keyGenerator: (req) => req.body?.email || req.ip,
     message: 'Muitas tentativas de login. Tente novamente em 15 minutos.',
-    [REDACTED_TOKEN]: true, // Não contar sucessos
+    skipSuccessfulRequests: true, // Não contar sucessos
     skipFailedRequests: false
   }),
 
@@ -42,7 +42,7 @@ const limiters = {
     maxRequests: 2,
     keyGenerator: (req) => req.user?.id || req.ip,
     message: 'Máximo 2 pagamentos por minuto.',
-    [REDACTED_TOKEN]: false,
+    skipSuccessfulRequests: false,
     skipFailedRequests: false
   }),
 
@@ -54,7 +54,7 @@ const limiters = {
     maxRequests: 3,
     keyGenerator: (req) => req.user?.id || req.ip,
     message: 'Máximo 3 reembolsos por hora.',
-    [REDACTED_TOKEN]: false,
+    skipSuccessfulRequests: false,
     skipFailedRequests: false
   }),
 
@@ -66,7 +66,7 @@ const limiters = {
     maxRequests: 10,
     keyGenerator: (req) => req.ip,
     message: 'Máximo 10 registros por hora. Tente novamente mais tarde.',
-    [REDACTED_TOKEN]: false,
+    skipSuccessfulRequests: false,
     skipFailedRequests: false
   }),
 
@@ -78,7 +78,7 @@ const limiters = {
     maxRequests: 3,
     keyGenerator: (req) => req.user?.id || req.ip,
     message: 'Máximo 3 avaliações por hora.',
-    [REDACTED_TOKEN]: false,
+    skipSuccessfulRequests: false,
     skipFailedRequests: false
   }),
 
@@ -90,7 +90,7 @@ const limiters = {
     maxRequests: 5,
     keyGenerator: (req) => req.user?.id || req.ip,
     message: 'Máximo 5 uploads por 10 minutos.',
-    [REDACTED_TOKEN]: false,
+    skipSuccessfulRequests: false,
     skipFailedRequests: false
   }),
 
@@ -118,8 +118,8 @@ const limiters = {
 /**
  * Hook para logar violações de rate limit
  */
-function [REDACTED_TOKEN](req, res, next) {
-  const rateLimitHeader = res.getHeader('[REDACTED_TOKEN]');
+function logRateLimitWarning(req, res, next) {
+  const rateLimitHeader = res.getHeader('X-RateLimit-Remaining');
   
   if (rateLimitHeader && parseInt(rateLimitHeader) < 2) {
     logger.warn('⚠️ Rate limit approaching', {
@@ -135,5 +135,5 @@ function [REDACTED_TOKEN](req, res, next) {
 
 module.exports = {
   limiters,
-  [REDACTED_TOKEN]
+  logRateLimitWarning
 };

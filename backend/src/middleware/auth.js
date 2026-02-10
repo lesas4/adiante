@@ -26,7 +26,7 @@ const generateToken = (userId, role = 'customer') => {
 };
 
 // ✅ CORRIGIDO: Gerar refresh token
-const [REDACTED_TOKEN] = (userId) => {
+const generateRefreshToken = (userId) => {
   return jwt.sign(
     { userId },
     JWT_REFRESH_SECRET,
@@ -94,7 +94,7 @@ module.exports = {
   authenticateToken,
   authorizeRole,
   generateToken,     // ✅ NOVO
-  [REDACTED_TOKEN], // ✅ NOVO
+  generateRefreshToken, // ✅ NOVO
   requireRole, // compat
 };
 

@@ -1,5 +1,5 @@
 /**
- * [REDACTED_TOKEN].js
+ * AdminDashboardService_Auto_162.js
  * Serviço para calcular métricas e KPIs do dashboard administrativo
  * 
  * Calcula:
@@ -10,7 +10,7 @@
  * - Dados de gráficos (sales, services, monthly)
  */
 
-class [REDACTED_TOKEN] {
+class AdminDashboardService_Auto_162 {
   constructor(db) {
     this.db = db;
   }
@@ -119,7 +119,7 @@ class [REDACTED_TOKEN] {
       ];
     } catch (error) {
       console.error('Error getting service data:', error);
-      return this.[REDACTED_TOKEN]();
+      return this.AdminDashboardService_Auto_162();
     }
   }
 
@@ -203,7 +203,7 @@ class [REDACTED_TOKEN] {
       }));
     } catch (error) {
       console.error('Error getting monthly revenue:', error);
-      return this.[REDACTED_TOKEN]();
+      return this.AdminDashboardService_Auto_162();
     }
   }
 
@@ -470,7 +470,7 @@ class [REDACTED_TOKEN] {
     ];
   }
 
-  [REDACTED_TOKEN]() {
+  AdminDashboardService_Auto_162() {
     return [
       { name: 'Limpeza Residencial', value: 45 },
       { name: 'Limpeza Comercial', value: 28 },
@@ -480,7 +480,7 @@ class [REDACTED_TOKEN] {
     ];
   }
 
-  [REDACTED_TOKEN]() {
+  AdminDashboardService_Auto_162() {
     return [
       { month: 'Jan 25', revenue: 4200 },
       { month: 'Fev 25', revenue: 3500 },
@@ -491,4 +491,4 @@ class [REDACTED_TOKEN] {
   }
 }
 
-module.exports = [REDACTED_TOKEN];
+module.exports = AdminDashboardService_Auto_162;

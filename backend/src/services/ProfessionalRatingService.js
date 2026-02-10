@@ -1,5 +1,5 @@
 /**
- * [REDACTED_TOKEN].js
+ * ProfessionalRatingService_Auto_208.js
  * Avaliação de profissional pelo admin
  */
 
@@ -8,7 +8,7 @@ const path = require('path');
 
 const DB_PATH = path.join(__dirname, '../../backend_data/database.db');
 
-class [REDACTED_TOKEN] {
+class ProfessionalRatingService_Auto_208 {
   /**
    * Adicionar avaliação do profissional
    */
@@ -17,7 +17,7 @@ class [REDACTED_TOKEN] {
       const db = new sqlite3.Database(DB_PATH);
 
       db.run(
-        `INSERT INTO [REDACTED_TOKEN] (professional_id, admin_id, rating, feedback, created_at)
+        `INSERT INTO ProfessionalRatingService_Auto_208 (professional_id, admin_id, rating, feedback, created_at)
          VALUES (?, ?, ?, ?, datetime('now'))`,
         [professionalId, adminId, rating, feedback],
         function (err) {
@@ -28,7 +28,7 @@ class [REDACTED_TOKEN] {
 
           // Atualizar média
           db.get(
-            `SELECT AVG(rating) as avg_rating FROM [REDACTED_TOKEN] WHERE professional_id = ?`,
+            `SELECT AVG(rating) as avg_rating FROM ProfessionalRatingService_Auto_208 WHERE professional_id = ?`,
             [professionalId],
             (err, row) => {
               db.run(
@@ -50,13 +50,13 @@ class [REDACTED_TOKEN] {
   /**
    * Obter histórico de avaliações
    */
-  static [REDACTED_TOKEN](professionalId) {
+  static ProfessionalRatingService_Auto_208(professionalId) {
     return new Promise((resolve, reject) => {
       const db = new sqlite3.Database(DB_PATH);
 
       db.all(
         `SELECT pr.*, a.name as admin_name 
-         FROM [REDACTED_TOKEN] pr
+         FROM ProfessionalRatingService_Auto_208 pr
          LEFT JOIN users a ON pr.admin_id = a.id
          WHERE pr.professional_id = ?
          ORDER BY pr.created_at DESC`,
@@ -73,7 +73,7 @@ class [REDACTED_TOKEN] {
   /**
    * Profissionais com avaliação baixa (flag para ação)
    */
-  static [REDACTED_TOKEN](minRating = 3.0) {
+  static ProfessionalRatingService_Auto_208(minRating = 3.0) {
     return new Promise((resolve, reject) => {
       const db = new sqlite3.Database(DB_PATH);
 
@@ -99,7 +99,7 @@ class [REDACTED_TOKEN] {
     const db = new sqlite3.Database(DB_PATH);
 
     db.run(`
-      CREATE TABLE IF NOT EXISTS [REDACTED_TOKEN] (
+      CREATE TABLE IF NOT EXISTS ProfessionalRatingService_Auto_208 (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         professional_id INTEGER NOT NULL,
         admin_id INTEGER NOT NULL,
@@ -110,11 +110,11 @@ class [REDACTED_TOKEN] {
         FOREIGN KEY (admin_id) REFERENCES users(id)
       )
     `, (err) => {
-      if (err) console.error('Erro ao criar tabela [REDACTED_TOKEN]:', err);
-      else console.log('✅ Tabela [REDACTED_TOKEN] criada');
+      if (err) console.error('Erro ao criar tabela ProfessionalRatingService_Auto_208:', err);
+      else console.log('✅ Tabela ProfessionalRatingService_Auto_208 criada');
       db.close();
     });
   }
 }
 
-module.exports = [REDACTED_TOKEN];
+module.exports = ProfessionalRatingService_Auto_208;

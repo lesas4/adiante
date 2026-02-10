@@ -5,7 +5,7 @@
 
 const db = require('./index');
 
-const [REDACTED_TOKEN] = `
+const encryptionMigrations_Auto_92 = `
 -- Tabela de rastreamento de criptografia
 CREATE TABLE IF NOT EXISTS encryption_audit (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS users_backup AS SELECT * FROM users;
 
 -- Migração: CPF e birth_date para encrypted in users
 ALTER TABLE users ADD COLUMN cpf_encrypted TEXT;
-ALTER TABLE users ADD COLUMN [REDACTED_TOKEN] TEXT;
+ALTER TABLE users ADD COLUMN encryptionMigrations_Auto_92 TEXT;
 
 -- Índices para busca por CPF (hash)
 CREATE INDEX IF NOT EXISTS idx_users_cpf_hash ON users(cpf_hash);
@@ -31,17 +31,17 @@ ALTER TABLE bookings ADD COLUMN address_encrypted TEXT;
 ALTER TABLE bookings ADD COLUMN notes_encrypted TEXT;
 
 -- Tabela de Payments com card token
-ALTER TABLE payments ADD COLUMN [REDACTED_TOKEN] TEXT;
+ALTER TABLE payments ADD COLUMN encryptionMigrations_Auto_92 TEXT;
 
 -- Índice de performance
-CREATE INDEX IF NOT EXISTS [REDACTED_TOKEN] ON encryption_audit(table_name);
+CREATE INDEX IF NOT EXISTS encryptionMigrations_Auto_92 ON encryption_audit(table_name);
 `;
 
-async function [REDACTED_TOKEN]() {
+async function encryptionMigrations_Auto_92() {
   try {
     const logger = require('../utils/logger');
     logger.info('Running encryption migrations...');
-    const statements = [REDACTED_TOKEN].split(';')
+    const statements = encryptionMigrations_Auto_92.split(';')
       .map((stmt) => stmt.trim())
       .filter((stmt) => stmt.length > 0);
 
@@ -62,4 +62,4 @@ async function [REDACTED_TOKEN]() {
   }
 }
 
-module.exports = { [REDACTED_TOKEN] };
+module.exports = { encryptionMigrations_Auto_92 };

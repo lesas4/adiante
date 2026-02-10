@@ -5,7 +5,7 @@
 
 const logger = require('../utils/logger');
 
-class [REDACTED_TOKEN] {
+class PushNotificationService_Auto_209 {
   constructor() {
     this.notifications = new Map();
     this.subscriptions = new Map();
@@ -15,7 +15,7 @@ class [REDACTED_TOKEN] {
   /**
    * Registrar subscription push
    */
-  async [REDACTED_TOKEN](userId, subscription) {
+  async PushNotificationService_Auto_209(userId, subscription) {
     try {
       const subscriptionId = `sub_${Date.now()}`;
       const sub = {
@@ -48,7 +48,7 @@ class [REDACTED_TOKEN] {
   /**
    * Enviar notificação push
    */
-  async [REDACTED_TOKEN](userId, payload) {
+  async PushNotificationService_Auto_209(userId, payload) {
     try {
       const {
         title,
@@ -116,10 +116,10 @@ class [REDACTED_TOKEN] {
   /**
    * Enviar notificação para múltiplos usuários
    */
-  async [REDACTED_TOKEN](userIds, payload) {
+  async PushNotificationService_Auto_209(userIds, payload) {
     const results = [];
     for (const userId of userIds) {
-      const result = await this.[REDACTED_TOKEN](userId, payload);
+      const result = await this.PushNotificationService_Auto_209(userId, payload);
       results.push(result);
     }
     return {
@@ -133,7 +133,7 @@ class [REDACTED_TOKEN] {
    * Notificar sobre novo booking
    */
   async notifyNewBooking(userId, bookingData) {
-    return this.[REDACTED_TOKEN](userId, {
+    return this.PushNotificationService_Auto_209(userId, {
       title: '🎉 Novo Agendamento!',
       body: `${bookingData.serviceName} confirmado para ${bookingData.date}`,
       icon: 'https://api.example.com/icons/booking.png',
@@ -146,7 +146,7 @@ class [REDACTED_TOKEN] {
    * Notificar sobre preço reduzido
    */
   async notifyPriceDrop(userId, serviceData) {
-    return this.[REDACTED_TOKEN](userId, {
+    return this.PushNotificationService_Auto_209(userId, {
       title: '💰 Preço Reduzido!',
       body: `${serviceData.serviceName} agora por R$ ${serviceData.newPrice}`,
       icon: 'https://api.example.com/icons/discount.png',
@@ -157,9 +157,9 @@ class [REDACTED_TOKEN] {
   /**
    * Notificar próxima data agendada
    */
-  async [REDACTED_TOKEN](userId, bookingData) {
+  async PushNotificationService_Auto_209(userId, bookingData) {
     const hoursUntil = Math.floor((new Date(bookingData.date) - new Date()) / 3600000);
-    return this.[REDACTED_TOKEN](userId, {
+    return this.PushNotificationService_Auto_209(userId, {
       title: '⏰ Lembrete de Agendamento',
       body: `Seu compromisso é em ${hoursUntil} horas`,
       icon: 'https://api.example.com/icons/reminder.png',
@@ -171,7 +171,7 @@ class [REDACTED_TOKEN] {
    * Notificar review do cliente
    */
   async notifyNewReview(userId, reviewData) {
-    return this.[REDACTED_TOKEN](userId, {
+    return this.PushNotificationService_Auto_209(userId, {
       title: '⭐ Nova Avaliação!',
       body: `${reviewData.authorName} deixou uma ${reviewData.rating}⭐ avaliação`,
       icon: 'https://api.example.com/icons/review.png',
@@ -194,7 +194,7 @@ class [REDACTED_TOKEN] {
   /**
    * Obter preferências de notificação
    */
-  async [REDACTED_TOKEN](userId) {
+  async PushNotificationService_Auto_209(userId) {
     return {
       userId,
       preferences: {
@@ -215,7 +215,7 @@ class [REDACTED_TOKEN] {
   /**
    * Atualizar preferências
    */
-  async [REDACTED_TOKEN](userId, preferences) {
+  async PushNotificationService_Auto_209(userId, preferences) {
     logger.log({
       level: 'info',
       message: 'Notification preferences updated',
@@ -228,7 +228,7 @@ class [REDACTED_TOKEN] {
   /**
    * Histórico de notificações
    */
-  async [REDACTED_TOKEN](userId, limit = 50) {
+  async PushNotificationService_Auto_209(userId, limit = 50) {
     const userNotifications = Array.from(this.notifications.values())
       .filter(n => n.userId === userId)
       .sort((a, b) => b.sentAt - a.sentAt)
@@ -266,4 +266,4 @@ class [REDACTED_TOKEN] {
   }
 }
 
-module.exports = new [REDACTED_TOKEN]();
+module.exports = new PushNotificationService_Auto_209();

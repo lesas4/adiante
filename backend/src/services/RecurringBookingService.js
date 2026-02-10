@@ -5,7 +5,7 @@
 
 const logger = require('../utils/logger');
 
-class [REDACTED_TOKEN] {
+class RecurringBookingService_Auto_215 {
   constructor() {
     this.recurringBookings = new Map();
   }
@@ -13,7 +13,7 @@ class [REDACTED_TOKEN] {
   /**
    * Criar booking recorrente
    */
-  async [REDACTED_TOKEN](booking) {
+  async RecurringBookingService_Auto_215(booking) {
     try {
       const {
         userId,
@@ -42,7 +42,7 @@ class [REDACTED_TOKEN] {
         time,
         notes,
         status: 'active',
-        nextOccurrence: this.[REDACTED_TOKEN](frequency, dayOfWeek, time),
+        nextOccurrence: this.RecurringBookingService_Auto_215(frequency, dayOfWeek, time),
         createdAt: new Date(),
         discount: 10 // 10% desconto para recorrentes
       };
@@ -67,7 +67,7 @@ class [REDACTED_TOKEN] {
   /**
    ✅ NOVO: Calcular próxima ocorrência
    */
-  [REDACTED_TOKEN](frequency, dayOfWeek, time) {
+  RecurringBookingService_Auto_215(frequency, dayOfWeek, time) {
     const now = new Date();
     const nextDate = new Date(now);
 
@@ -176,7 +176,7 @@ class [REDACTED_TOKEN] {
       };
 
       // Atualizar próxima ocorrência
-      recurring.nextOccurrence = this.[REDACTED_TOKEN](
+      recurring.nextOccurrence = this.RecurringBookingService_Auto_215(
         recurring.frequency,
         recurring.dayOfWeek,
         recurring.time
@@ -199,7 +199,7 @@ class [REDACTED_TOKEN] {
   /**
    ✅ NOVO: Listar bookings recorrentes do usuário
    */
-  async [REDACTED_TOKEN](userId) {
+  async RecurringBookingService_Auto_215(userId) {
     const userRecurring = Array.from(this.recurringBookings.values())
       .filter(r => r.userId === userId);
 
@@ -231,4 +231,4 @@ class [REDACTED_TOKEN] {
   }
 }
 
-module.exports = new [REDACTED_TOKEN]();
+module.exports = new RecurringBookingService_Auto_215();

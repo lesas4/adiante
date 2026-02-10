@@ -53,11 +53,11 @@ function enableCompression(req, res, next) {
 /**
  * Middleware para adicionar headers de segurança para assets
  */
-function [REDACTED_TOKEN](req, res, next) {
+function assetSecurityHeaders(req, res, next) {
   res.set({
-    '[REDACTED_TOKEN]': 'nosniff',
+    'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
-    'Referrer-Policy': '[REDACTED_TOKEN]'
+    'Referrer-Policy': 'strict-origin-when-cross-origin'
   });
 
   next();
@@ -134,7 +134,7 @@ function generateAssetETag(req, res, next) {
 module.exports = {
   cdnCacheHeaders,
   enableCompression,
-  [REDACTED_TOKEN],
+  assetSecurityHeaders,
   logAssetDownload,
   serveOptimizedAsset,
   generateAssetETag

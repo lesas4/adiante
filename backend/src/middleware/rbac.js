@@ -47,7 +47,7 @@ const authorizeByRole = (requiredRoles) => {
 /**
  * Authorize by permission
  */
-const [REDACTED_TOKEN] = (requiredPermission) => {
+const rbac_Auto_113 = (requiredPermission) => {
   return (req, res, next) => {
     try {
       const userRole = req.user?.role;
@@ -81,7 +81,7 @@ const [REDACTED_TOKEN] = (requiredPermission) => {
 /**
  * Authorize by multiple permissions (AND logic)
  */
-const [REDACTED_TOKEN] = (requiredPermissions) => {
+const rbac_Auto_113 = (requiredPermissions) => {
   return (req, res, next) => {
     try {
       const userRole = req.user?.role;
@@ -115,7 +115,7 @@ const [REDACTED_TOKEN] = (requiredPermissions) => {
 /**
  * Authorize by multiple permissions (OR logic)
  */
-const [REDACTED_TOKEN] = (requiredPermissions) => {
+const rbac_Auto_113 = (requiredPermissions) => {
   return (req, res, next) => {
     try {
       const userRole = req.user?.role;
@@ -230,9 +230,9 @@ const auditLog = (action) => {
 
 module.exports = {
   authorizeByRole,
-  [REDACTED_TOKEN],
-  [REDACTED_TOKEN],
-  [REDACTED_TOKEN],
+  rbac_Auto_113,
+  rbac_Auto_113,
+  rbac_Auto_113,
   adminOnly,
   managerOrHigher,
   staffOrHigher,

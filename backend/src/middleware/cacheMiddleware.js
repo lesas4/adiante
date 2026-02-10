@@ -55,7 +55,7 @@ const cacheMiddleware = (ttl = 300) => {
 /**
  * 🗑️ Middleware para invalidar cache
  */
-const [REDACTED_TOKEN] = (patterns = []) => {
+const invalidateCache = (patterns = []) => {
   return async (req, res, next) => {
     // Armazena a função original res.json
     const originalJson = res.json.bind(res);
@@ -80,7 +80,7 @@ const [REDACTED_TOKEN] = (patterns = []) => {
 /**
  * 🔍 Middleware para debug de cache
  */
-const [REDACTED_TOKEN] = async (req, res, next) => {
+const cacheDebug = async (req, res, next) => {
   const cacheKey = `http:${req.originalUrl || req.url}`;
   
   try {
@@ -97,7 +97,7 @@ const [REDACTED_TOKEN] = async (req, res, next) => {
 /**
  * 📊 Middleware para cache de agendamentos (mais agressivo)
  */
-const [REDACTED_TOKEN] = async (req, res, next) => {
+const bookingsCache = async (req, res, next) => {
   if (req.method !== 'GET') {
     return next();
   }
@@ -129,7 +129,7 @@ const [REDACTED_TOKEN] = async (req, res, next) => {
 
 module.exports = {
   cacheMiddleware,
-  [REDACTED_TOKEN],
-  [REDACTED_TOKEN],
-  [REDACTED_TOKEN],
+  invalidateCache,
+  cacheDebug,
+  bookingsCache,
 };

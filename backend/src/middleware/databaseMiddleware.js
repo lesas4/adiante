@@ -3,13 +3,13 @@
  * Rastreia e analisa queries para otimização
  */
 
-const [REDACTED_TOKEN] = require('../services/[REDACTED_TOKEN]');
+const DatabaseOptimizationService = require('../services/DatabaseOptimizationService');
 const logger = require('../utils/logger');
 
 /**
  * Middleware para rastrear tempo de execução das queries
  */
-function [REDACTED_TOKEN](db) {
+function dbQueryTracker(db) {
   return function(req, res, next) {
     // Interceptar métodos de query do banco
     const originalRun = db.run?.bind(db);
@@ -22,7 +22,7 @@ function [REDACTED_TOKEN](db) {
         const startTime = Date.now();
         const wrappedCallback = (err, result) => {
           const executionTime = Date.now() - startTime;
-          [REDACTED_TOKEN].trackQuery(sql, executionTime);
+          DatabaseOptimizationService.trackQuery(sql, executionTime);
           if (callback) callback(err, result);
         };
         return originalRun(sql, params, wrappedCallback);
@@ -34,7 +34,7 @@ function [REDACTED_TOKEN](db) {
         const startTime = Date.now();
         const wrappedCallback = (err, rows) => {
           const executionTime = Date.now() - startTime;
-          [REDACTED_TOKEN].trackQuery(sql, executionTime);
+          DatabaseOptimizationService.trackQuery(sql, executionTime);
           if (callback) callback(err, rows);
         };
         return originalAll(sql, params, wrappedCallback);
@@ -46,7 +46,7 @@ function [REDACTED_TOKEN](db) {
         const startTime = Date.now();
         const wrappedCallback = (err, row) => {
           const executionTime = Date.now() - startTime;
-          [REDACTED_TOKEN].trackQuery(sql, executionTime);
+          DatabaseOptimizationService.trackQuery(sql, executionTime);
           if (callback) callback(err, row);
         };
         return originalGet(sql, params, wrappedCallback);
@@ -74,7 +74,7 @@ function logPreparedQueries(req, res, next) {
 /**
  * Middleware para cache de queries (se habilitado)
  */
-function [REDACTED_TOKEN](cache) {
+function queryCacheMiddleware(cache) {
   return function(req, res, next) {
     if (!req.query.cache || req.method !== 'GET') {
       return next();
@@ -103,7 +103,7 @@ function [REDACTED_TOKEN](cache) {
 /**
  * Middleware para monitorar conexões
  */
-function [REDACTED_TOKEN]() {
+function dbPoolMonitor() {
   return function(req, res, next) {
     // Adicionar info de pool ao request
     req.dbPoolStats = {
@@ -125,8 +125,8 @@ function [REDACTED_TOKEN]() {
 }
 
 module.exports = {
-  [REDACTED_TOKEN],
+  dbQueryTracker,
   logPreparedQueries,
-  [REDACTED_TOKEN],
-  [REDACTED_TOKEN]
+  queryCacheMiddleware,
+  dbPoolMonitor
 };
