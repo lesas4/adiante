@@ -113,3 +113,10 @@ export default function ReviewsPage() {
     </div>
   );
 }
+
+export const getServerSideProps = async () => {
+  return {
+    props: {},
+    revalidate: 60
+  };
+};

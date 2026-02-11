@@ -36,7 +36,7 @@ const PaymentSystem = ({ amount, onPaymentSuccess, onPaymentError }) => {
 
   const generatePixCode = () => {
     // Simulação de código PIX
-    const code = `00020126580014BR.GOV.BCB.[REDACTED_TOKEN].COM.[REDACTED_TOKEN]${amount.toFixed(2).replace('.', '')}5802BR5913Leidy Cleaner6009SAO PAULO62070503***6304`;
+    const code = `00020126580014BR.GOV.BCB.decoded.COM.decoded${amount.toFixed(2).replace('.', '')}5802BR5913Leidy Cleaner6009SAO PAULO62070503***6304`;
     setPixCode(code);
   };
 
@@ -214,7 +214,7 @@ const PaymentSystem = ({ amount, onPaymentSuccess, onPaymentError }) => {
           >
             {isProcessing ? (
               <div className="flex items-center justify-center gap-2">
-                <div className="w-5 h-5 border-2 border-white [REDACTED_TOKEN] rounded-full animate-spin"></div>
+                <div className="w-5 h-5 border-2 border-white decoded rounded-full animate-spin"></div>
                 Processando...
               </div>
             ) : (

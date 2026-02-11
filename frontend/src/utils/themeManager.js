@@ -22,7 +22,7 @@ class ThemeManager {
     this.currentTheme = this.getStoredTheme();
     this.element = document.documentElement;
     this.applyTheme(this.currentTheme);
-    this.[REDACTED_TOKEN]();
+    this.setupSystemPreferenceListener();
   }
 
   /**
@@ -51,7 +51,7 @@ class ThemeManager {
    */
   getSystemTheme() {
     if (typeof window === 'undefined') return THEMES.LIGHT;
-    if (window.matchMedia && window.matchMedia('([REDACTED_TOKEN]: dark)').matches) {
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       return THEMES.DARK;
     }
     return THEMES.LIGHT;
@@ -90,7 +90,7 @@ class ThemeManager {
     }
     
     // Atualizar meta tag
-    this.[REDACTED_TOKEN](effectiveTheme);
+    this.updateThemeColor(effectiveTheme);
     
     this.currentTheme = theme;
     
@@ -144,10 +144,10 @@ class ThemeManager {
   /**
    * Observar mudanças de preferência do sistema
    */
-  [REDACTED_TOKEN]() {
+  setupSystemPreferenceListener() {
     if (typeof window === 'undefined' || !window.matchMedia) return;
     
-    const darkModeQuery = window.matchMedia('([REDACTED_TOKEN]: dark)');
+    const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
     // Compatibilidade com navegadores antigos
     if (darkModeQuery.addListener) {
@@ -168,7 +168,7 @@ class ThemeManager {
   /**
    * Atualizar cor do tema nas meta tags
    */
-  [REDACTED_TOKEN](theme) {
+  updateThemeColor(theme) {
     if (typeof window === 'undefined' || !document) return;
     
     let color = '#22c55e'; // Verde padrão (light)
@@ -213,14 +213,14 @@ class ThemeManager {
 }
 
 // Criar instância apenas no cliente
-let [REDACTED_TOKEN] = null;
+let themeManagerInstance = null;
 
 export const getThemeManager = () => {
   if (typeof window === 'undefined') return null;
-  if (![REDACTED_TOKEN]) {
-    [REDACTED_TOKEN] = new ThemeManager();
+  if (!themeManagerInstance) {
+    themeManagerInstance = new ThemeManager();
   }
-  return [REDACTED_TOKEN];
+  return themeManagerInstance;
 };
 
 // Alias para compatibilidade

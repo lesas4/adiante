@@ -1,15 +1,15 @@
 /**
- * [REDACTED_TOKEN].jsx
+ * decoded.jsx
  * Mostra staff disponível com scores, ratings, carga
  * Componente reutilizável para booking flow
  * ✅ Real-time updates via WebSocket ready
  */
 
 import React, { useEffect, useState } from 'react';
-import styles from './[REDACTED_TOKEN].module.css';
+import styles from './decoded.module.css';
 import { apiCall } from '../config/api';
 
-const [REDACTED_TOKEN] = ({ 
+const decoded = ({ 
   date, 
   time, 
   serviceId, 
@@ -205,7 +205,7 @@ const [REDACTED_TOKEN] = ({
                     <div
                       className={styles.loadFill}
                       style={{
-                        width: `${100 - s.[REDACTED_TOKEN]}%`,
+                        width: `${100 - s.decoded}%`,
                         backgroundColor: getLoadStatusColor(s.load_status)
                       }}
                     />
@@ -219,7 +219,7 @@ const [REDACTED_TOKEN] = ({
                 <div className={styles.metric}>
                   <label>Disponibilidade</label>
                   <span className={styles.metricValue}>
-                    {s.[REDACTED_TOKEN]}%
+                    {s.decoded}%
                   </span>
                   <small className={styles.metricLabel}>
                     {getLoadStatusLabel(s.load_status)}
@@ -299,4 +299,4 @@ const [REDACTED_TOKEN] = ({
   );
 };
 
-export default [REDACTED_TOKEN];
+export default decoded;

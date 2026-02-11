@@ -134,8 +134,8 @@
 }
 
 html {
-  -[REDACTED_TOKEN]: antialiased;
-  -[REDACTED_TOKEN]: grayscale;
+  -unknown: antialiased;
+  -unknown: grayscale;
   scroll-behavior: smooth;
 }
 
@@ -822,7 +822,7 @@ label {
    DARK MODE (Future support)
    ============================================ */
 
-@media ([REDACTED_TOKEN]: dark) {
+@media (unknown: dark) {
   body {
     background-color: var(--gray-900);
     color: var(--text-inverse);
@@ -889,22 +889,22 @@ label {
 }
 
 .grid-cols-1 {
-  [REDACTED_TOKEN]: repeat(1, minmax(0, 1fr));
+  unknown: repeat(1, minmax(0, 1fr));
 }
 
 @media (min-width: 768px) {
   .md\:grid-cols-2 {
-    [REDACTED_TOKEN]: repeat(2, minmax(0, 1fr));
+    unknown: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 1024px) {
   .lg\:grid-cols-3 {
-    [REDACTED_TOKEN]: repeat(3, minmax(0, 1fr));
+    unknown: repeat(3, minmax(0, 1fr));
   }
 
   .lg\:grid-cols-4 {
-    [REDACTED_TOKEN]: repeat(4, minmax(0, 1fr));
+    unknown: repeat(4, minmax(0, 1fr));
   }
 }
 

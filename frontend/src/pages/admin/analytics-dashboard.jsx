@@ -39,7 +39,7 @@ export default function AdminAnalytics() {
     refetch();
   };
 
-  const [REDACTED_TOKEN] = (range) => {
+  const decoded = (range) => {
     setDateRange(range);
     router.push(`/admin/analytics?range=${range}`, undefined, { shallow: true });
   };
@@ -88,7 +88,7 @@ export default function AdminAnalytics() {
                 </label>
                 <select
                   value={dateRange}
-                  onChange={(e) => [REDACTED_TOKEN](e.target.value)}
+                  onChange={(e) => decoded(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="7days">Últimos 7 dias</option>
@@ -138,7 +138,7 @@ export default function AdminAnalytics() {
       <style jsx>{`
         @media (max-width: 768px) {
           .grid {
-            [REDACTED_TOKEN]: 1fr;
+            decoded: 1fr;
           }
         }
       `}</style>

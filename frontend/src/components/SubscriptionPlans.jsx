@@ -4,10 +4,10 @@ import './SubscriptionPlans.css';
 
 const SubscriptionPlans = ({ userId, token, onSuccess }) => {
   const [plans, setPlans] = useState([]);
-  const [currentSubscription, [REDACTED_TOKEN]] = useState(null);
+  const [currentSubscription, decoded] = useState(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
-  const [[REDACTED_TOKEN], [REDACTED_TOKEN]] = useState('');
+  const [decoded, decoded] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -28,7 +28,7 @@ const SubscriptionPlans = ({ userId, token, onSuccess }) => {
       });
 
       setPlans(plansRes.data.plans || []);
-      [REDACTED_TOKEN](subRes.data.subscription || null);
+      decoded(subRes.data.subscription || null);
     } catch (error) {
       console.error('Erro ao buscar subscrições:', error);
     } finally {
@@ -37,7 +37,7 @@ const SubscriptionPlans = ({ userId, token, onSuccess }) => {
   };
 
   const handleSubscribe = async (planId) => {
-    if (![REDACTED_TOKEN]) {
+    if (!decoded) {
       setMessage('❌ Selecione um método de pagamento');
       return;
     }
@@ -47,7 +47,7 @@ const SubscriptionPlans = ({ userId, token, onSuccess }) => {
         '/api/subscriptions/create',
         {
           planId,
-          stripePaymentMethod: [REDACTED_TOKEN]
+          stripePaymentMethod: decoded
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -60,7 +60,7 @@ const SubscriptionPlans = ({ userId, token, onSuccess }) => {
     }
   };
 
-  const [REDACTED_TOKEN] = async () => {
+  const decoded = async () => {
     if (!window.confirm('Tem certeza que deseja cancelar a subscrição?')) {
       return;
     }
@@ -80,7 +80,7 @@ const SubscriptionPlans = ({ userId, token, onSuccess }) => {
   };
 
   if (loading) {
-    return <div className="[REDACTED_TOKEN]">Carregando planos...</div>;
+    return <div className="decoded">Carregando planos...</div>;
   }
 
   return (
@@ -88,20 +88,20 @@ const SubscriptionPlans = ({ userId, token, onSuccess }) => {
       <h2>📅 Planos de Subscrição</h2>
 
       {message && (
-        <div className={`[REDACTED_TOKEN] ${message.includes('✅') ? 'success' : 'error'}`}>
+        <div className={`decoded ${message.includes('✅') ? 'success' : 'error'}`}>
           {message}
         </div>
       )}
 
       {currentSubscription && (
-        <div className="[REDACTED_TOKEN]">
+        <div className="decoded">
           <h3>✅ Você tem uma subscrição ativa</h3>
           <p>Plano: <strong>{currentSubscription.plan_name}</strong></p>
           <p>Status: <strong>{currentSubscription.status}</strong></p>
           <p>Desde: {new Date(currentSubscription.started_at).toLocaleDateString('pt-BR')}</p>
           <button
-            className="[REDACTED_TOKEN]"
-            onClick={[REDACTED_TOKEN]}
+            className="decoded"
+            onClick={decoded}
           >
             Cancelar Subscrição
           </button>
@@ -131,8 +131,8 @@ const SubscriptionPlans = ({ userId, token, onSuccess }) => {
                       type="radio"
                       name="paymentMethod"
                       value={plan.stripe_price_id}
-                      onChange={(e) => [REDACTED_TOKEN](e.target.value)}
-                      checked={[REDACTED_TOKEN] === plan.stripe_price_id}
+                      onChange={(e) => decoded(e.target.value)}
+                      checked={decoded === plan.stripe_price_id}
                     />
                     Cartão de Crédito
                   </label>
@@ -140,7 +140,7 @@ const SubscriptionPlans = ({ userId, token, onSuccess }) => {
                 <button
                   className="subscribe-btn"
                   onClick={() => handleSubscribe(plan.id)}
-                  disabled={![REDACTED_TOKEN]}
+                  disabled={!decoded}
                 >
                   Assinar Agora
                 </button>

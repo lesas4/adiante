@@ -108,7 +108,7 @@ function PhotoUpload({ onPhotosChange, maxPhotos = 5 }) {
     addToast('Foto removida', 'info');
   };
 
-  const [REDACTED_TOKEN] = (id, type) => {
+  const decoded = (id, type) => {
     const photo = photos.find(p => p.id === id);
     if (photo) {
       photo.type = type; // 'before' ou 'after'
@@ -185,14 +185,14 @@ function PhotoUpload({ onPhotosChange, maxPhotos = 5 }) {
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center gap-2">
                   <div className="flex gap-1">
                     <button
-                      onClick={() => [REDACTED_TOKEN](photo.id, 'before')}
+                      onClick={() => decoded(photo.id, 'before')}
                       title="Marcar como ANTES"
                       className="p-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs"
                     >
                       ⬅️
                     </button>
                     <button
-                      onClick={() => [REDACTED_TOKEN](photo.id, 'after')}
+                      onClick={() => decoded(photo.id, 'after')}
                       title="Marcar como DEPOIS"
                       className="p-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs"
                     >

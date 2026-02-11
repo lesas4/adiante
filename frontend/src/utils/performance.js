@@ -31,7 +31,7 @@ export function useLazyImage(src, placeholder = '') {
 }
 
 // Hook para intersection observer (lazy loading)
-export function [REDACTED_TOKEN](options = {}) {
+export function decodeToken(options = {}) {
   const [isIntersecting, setIsIntersecting] = useState(false);
   const [hasIntersected, setHasIntersected] = useState(false);
   const ref = useRef(null);
@@ -40,7 +40,7 @@ export function [REDACTED_TOKEN](options = {}) {
     const element = ref.current;
     if (!element) return;
 
-    const observer = new [REDACTED_TOKEN](
+    const observer = new decoded(
       ([entry]) => {
         setIsIntersecting(entry.isIntersecting);
         if (entry.isIntersecting && !hasIntersected) {
@@ -115,7 +115,7 @@ export function useDebounce(value, delay) {
 }
 
 // Hook para performance monitoring
-export function [REDACTED_TOKEN](name) {
+export function decodeToken(name) {
   const startTimeRef = useRef(null);
 
   useEffect(() => {

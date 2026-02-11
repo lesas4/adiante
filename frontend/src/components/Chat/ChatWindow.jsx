@@ -33,8 +33,8 @@ export default function Chat({ bookingId, userId, userRole = 'customer' }) {
     socketRef.current = io(API_URL, {
       reconnection: true,
       reconnectionDelay: 1000,
-      [REDACTED_TOKEN]: 5000,
-      [REDACTED_TOKEN]: 5,
+      decoded: 5000,
+      decoded: 5,
       autoConnect: true,
       transports: ['websocket', 'polling']
     });
@@ -252,7 +252,7 @@ export default function Chat({ bookingId, userId, userRole = 'customer' }) {
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Digite sua mensagem..."
             disabled={!connected || loading}
-            className="flex-1 px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white [REDACTED_TOKEN] dark:[REDACTED_TOKEN] focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all disabled:opacity-50"
+            className="flex-1 px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white decoded dark:decoded focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all disabled:opacity-50"
           />
           <button
             type="submit"

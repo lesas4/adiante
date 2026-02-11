@@ -6,16 +6,16 @@ import { CalendarIcon, ClockIcon, BellIcon, ArrowPathIcon } from '@heroicons/rea
 import { useNotifications } from './NotificationSystem';
 
 export function RecurringScheduler() {
-  const [scheduledServices, [REDACTED_TOKEN]] = useState([]);
+  const [scheduledServices, decoded] = useState([]);
   const [showScheduler, setShowScheduler] = useState(false);
   const { addNotification } = useNotifications();
 
   useEffect(() => {
     // Carregar agendamentos do localStorage
-    const saved = localStorage.getItem('[REDACTED_TOKEN]');
+    const saved = localStorage.getItem('decoded');
     if (saved) {
       const services = JSON.parse(saved);
-      [REDACTED_TOKEN](services);
+      decoded(services);
       setupReminders(services);
     }
   }, []);
@@ -52,9 +52,9 @@ export function RecurringScheduler() {
     };
 
     const updatedServices = [...scheduledServices, newService];
-    [REDACTED_TOKEN](updatedServices);
+    decoded(updatedServices);
 
-    localStorage.setItem('[REDACTED_TOKEN]', JSON.stringify(updatedServices));
+    localStorage.setItem('decoded', JSON.stringify(updatedServices));
     setupReminders([newService]);
 
     addNotification({
@@ -113,8 +113,8 @@ export function RecurringScheduler() {
     }
 
     const updatedServices = scheduledServices.filter(s => s.id !== id);
-    [REDACTED_TOKEN](updatedServices);
-    localStorage.setItem('[REDACTED_TOKEN]', JSON.stringify(updatedServices));
+    decoded(updatedServices);
+    localStorage.setItem('decoded', JSON.stringify(updatedServices));
   };
 
   return (
@@ -130,7 +130,7 @@ export function RecurringScheduler() {
         </button>
       </div>
 
-      <[REDACTED_TOKEN]
+      <decoded
         services={scheduledServices}
         onRemove={removeService}
       />
@@ -145,7 +145,7 @@ export function RecurringScheduler() {
   );
 }
 
-function [REDACTED_TOKEN]({ services, onRemove }) {
+function decodeToken({ services, onRemove }) {
   if (services.length === 0) {
     return (
       <div className="text-center py-12 text-gray-500">

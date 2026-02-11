@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './GeoMap.css';
 
-const GeoMap = ({ userId, token, [REDACTED_TOKEN] }) => {
+const GeoMap = ({ userId, token, decoded }) => {
   const [userLocation, setUserLocation] = useState(null);
-  const [nearbyProfessionals, [REDACTED_TOKEN]] = useState([]);
+  const [nearbyProfessionals, decoded] = useState([]);
   const [radius, setRadius] = useState(5);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -57,7 +57,7 @@ const GeoMap = ({ userId, token, [REDACTED_TOKEN] }) => {
       const { latitude, longitude } = geocodeRes.data.coordinates;
       setUserLocation({ latitude, longitude });
       setSelectedAddress(address);
-      await [REDACTED_TOKEN](latitude, longitude);
+      await decoded(latitude, longitude);
     } catch (error) {
       setMessage('❌ Erro ao geocodificar endereço');
     } finally {
@@ -65,7 +65,7 @@ const GeoMap = ({ userId, token, [REDACTED_TOKEN] }) => {
     }
   };
 
-  const [REDACTED_TOKEN] = async (lat, lng) => {
+  const decoded = async (lat, lng) => {
     try {
       setLoading(true);
       const res = await axios.get(
@@ -73,7 +73,7 @@ const GeoMap = ({ userId, token, [REDACTED_TOKEN] }) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      [REDACTED_TOKEN](res.data.professionals || []);
+      decoded(res.data.professionals || []);
       if (res.data.professionals?.length === 0) {
         setMessage(`⚠️ Nenhum profissional encontrado em ${radius}km`);
       }
@@ -89,7 +89,7 @@ const GeoMap = ({ userId, token, [REDACTED_TOKEN] }) => {
       setMessage('❌ Obtenha sua localização primeiro');
       return;
     }
-    [REDACTED_TOKEN](userLocation.latitude, userLocation.longitude);
+    decoded(userLocation.latitude, userLocation.longitude);
   };
 
   return (
@@ -173,12 +173,12 @@ const GeoMap = ({ userId, token, [REDACTED_TOKEN] }) => {
                 </p>
 
                 {professional.address && (
-                  <p className="[REDACTED_TOKEN]">{professional.address}</p>
+                  <p className="decoded">{professional.address}</p>
                 )}
 
                 <button
-                  className="[REDACTED_TOKEN]"
-                  onClick={() => [REDACTED_TOKEN]?.(professional)}
+                  className="decoded"
+                  onClick={() => decoded?.(professional)}
                 >
                   Selecionar
                 </button>
