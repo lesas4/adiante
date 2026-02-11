@@ -38,23 +38,29 @@ const HourPriceCalculator = ({ onPriceChange, multipleSites = false }) => {
       basePrice = eightHourPrice * (1 + SURGE_TAX) + extraHours * PER_HOUR;
     }
 
-    let extrasTotal = 0;
+    // Calcular extras percentuais e fixos separadamente
+    let percentualExtrasTotal = 0;
+    let fixedExtrasTotal = 0;
+
     if (extraList.includes('organizacao')) {
-      const org = basePrice * 0.10;
-      extrasTotal += org * (1 + EXTRAS_TAX);
+      percentualExtrasTotal += basePrice * 0.10;
     }
     if (extraList.includes('pos_obra')) {
-      const pos = basePrice * 0.30;
-      extrasTotal += pos * (1 + EXTRAS_TAX);
+      percentualExtrasTotal += basePrice * 0.30;
     }
     if (extraList.includes('levar_produtos')) {
-      extrasTotal += 30; // Fixo, sem taxa
+      fixedExtrasTotal += 30; // Fixo, sem taxa
     }
+
+    // Taxa aplicada em cima de (horas + extras percentuais)
+    const taxValue = (basePrice + percentualExtrasTotal) * EXTRAS_TAX;
 
     return {
       basePrice: Math.round(basePrice * 100) / 100,
-      extrasTotal: Math.round(extrasTotal * 100) / 100,
-      finalPrice: Math.round((basePrice + extrasTotal) * 100) / 100
+      percentualExtrasTotal: Math.round(percentualExtrasTotal * 100) / 100,
+      taxValue: Math.round(taxValue * 100) / 100,
+      fixedExtrasTotal: Math.round(fixedExtrasTotal * 100) / 100,
+      finalPrice: Math.round((basePrice + percentualExtrasTotal + taxValue + fixedExtrasTotal) * 100) / 100
     };
   };
 
@@ -213,15 +219,15 @@ const HourPriceCalculator = ({ onPriceChange, multipleSites = false }) => {
           <div className="bg-green-50 border-2 border-green-600 rounded-lg p-6">
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div>
-                <div className="text-gray-600 text-sm">Base</div>
-                <div className="text-2xl font-bold text-green-600">
+                <div className="text-gray-600 text-sm">Horas</div>
+                <div className="text-xl font-bold text-green-600">
                   R$ {pricing.basePrice?.toFixed(2) || '0,00'}
                 </div>
               </div>
               <div>
-                <div className="text-gray-600 text-sm">Extras</div>
-                <div className="text-2xl font-bold text-orange-600">
-                  R$ {pricing.extrasTotal?.toFixed(2) || '0,00'}
+                <div className="text-gray-600 text-sm">Extras + Taxa</div>
+                <div className="text-xl font-bold text-orange-600">
+                  R$ {(pricing.percentualExtrasTotal + pricing.taxValue + pricing.fixedExtrasTotal)?.toFixed(2) || '0,00'}
                 </div>
               </div>
               <div>
