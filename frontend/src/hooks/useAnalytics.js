@@ -58,7 +58,7 @@ export const useAnalytics = (dateRange = '30days') => {
     }
   }, []);
 
-  const [REDACTED_TOKEN] = useCallback(async (options = {}) => {
+  const fetchConversionData = useCallback(async (options = {}) => {
     try {
       const { getAuthHeader } = await import('../utils/authToken');
       const config = { headers: { ...getAuthHeader() } };
@@ -75,7 +75,7 @@ export const useAnalytics = (dateRange = '30days') => {
     }
   }, []);
 
-  const [REDACTED_TOKEN] = useCallback(async (options = {}) => {
+  const fetchCustomersData = useCallback(async (options = {}) => {
     try {
       const { getAuthHeader } = await import('../utils/authToken');
       const config = { headers: { ...getAuthHeader() } };
@@ -161,8 +161,8 @@ export const useAnalytics = (dateRange = '30days') => {
     error,
     refetch: fetchAnalytics,
     fetchRevenueStats,
-    [REDACTED_TOKEN],
-    [REDACTED_TOKEN],
+    decoded,
+    decoded,
     fetchChurnAnalytics,
     fetchBookingStats,
     exportReport

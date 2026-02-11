@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useToast } from '../../context/ToastContext';
 import { apiCall } from '../../config/api';
 
-function [REDACTED_TOKEN](base64String) {
+function decodeTokenFromBase64(base64String) {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
   const rawData = window.atob(base64);
@@ -13,7 +13,7 @@ function [REDACTED_TOKEN](base64String) {
   return outputArray;
 }
 
-function [REDACTED_TOKEN]() {
+function PushManager() {
   const [supported, setSupported] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
   const { addToast } = useToast();
@@ -34,7 +34,7 @@ function [REDACTED_TOKEN]() {
     }
   };
 
-  const [REDACTED_TOKEN] = async () => {
+  const decoded = async () => {
     if (!supported) return addToast('Push não suportado neste navegador', 'error');
     try {
       const reg = await navigator.serviceWorker.register('/sw.js');
@@ -46,12 +46,12 @@ function [REDACTED_TOKEN]() {
         return;
       }
 
-      const vapidKey = process.env.[REDACTED_TOKEN];
+      const vapidKey = process.env.decoded;
       let sub;
       if (vapidKey) {
         sub = await reg.pushManager.subscribe({
           userVisibleOnly: true,
-          [REDACTED_TOKEN]: [REDACTED_TOKEN](vapidKey),
+          decoded: decoded(vapidKey),
         });
       } else {
         // fallback subscription without VAPID (may not work on some browsers)
@@ -104,7 +104,7 @@ function [REDACTED_TOKEN]() {
       <p className="text-sm text-gray-600 mb-3">Ative notificações para receber atualizações e lembretes.</p>
       <div className="flex gap-2">
         {!subscribed ? (
-          <button onClick={[REDACTED_TOKEN]} className="px-4 py-2 bg-blue-600 text-white rounded">Ativar</button>
+          <button onClick={decoded} className="px-4 py-2 bg-blue-600 text-white rounded">Ativar</button>
         ) : (
           <button onClick={unsubscribe} className="px-4 py-2 bg-gray-200 rounded">Desativar</button>
         )}
@@ -113,4 +113,4 @@ function [REDACTED_TOKEN]() {
   );
 }
 
-export default [REDACTED_TOKEN];
+export default decoded;

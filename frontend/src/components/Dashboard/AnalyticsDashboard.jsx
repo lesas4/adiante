@@ -66,7 +66,7 @@ export const BookingTrendsChart = ({ data }) => {
  * Conversion Funnel Component
  * Display conversion rates through funnel
  */
-export const [REDACTED_TOKEN] = ({ data }) => {
+export const ConversionFunnel = ({ data }) => {
   const chartData = [
     { name: 'Visitantes', value: data.visitors || 1000 },
     { name: 'Clientes Ativos', value: data.activeCustomers || 750 },
@@ -109,7 +109,7 @@ export const [REDACTED_TOKEN] = ({ data }) => {
  * Customer Lifetime Value Distribution
  * Scatter plot of customers by LTV
  */
-export const [REDACTED_TOKEN] = ({ data }) => {
+export const CustomerLTVChart = ({ data }) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h3 className="text-xl font-bold mb-4">Customer Lifetime Value</h3>
@@ -130,7 +130,7 @@ export const [REDACTED_TOKEN] = ({ data }) => {
  * Customer Segmentation Pie Chart
  * Show distribution across customer segments
  */
-export const [REDACTED_TOKEN] = ({ data }) => {
+export const CustomerSegmentationChart = ({ data }) => {
   const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
   return (
@@ -289,12 +289,12 @@ export const AnalyticsDashboard = ({ data, loading, error }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <[REDACTED_TOKEN] data={data.funnelData || {}} />
-        <[REDACTED_TOKEN] data={data.segmentationData || []} />
+        <decoded data={data.funnelData || {}} />
+        <decoded data={data.segmentationData || []} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <[REDACTED_TOKEN] data={data.clvData || []} />
+        <decoded data={data.clvData || []} />
         <ChurnRiskHeatmap data={data.churnData || []} />
       </div>
 

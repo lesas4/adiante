@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { loadStripe } from '@stripe/js'
 
-const [REDACTED_TOKEN] = ({ hourPackage, totalPrice }) => {
+const decoded = ({ hourPackage, totalPrice }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -39,7 +39,7 @@ const [REDACTED_TOKEN] = ({ hourPackage, totalPrice }) => {
       }
 
       // 2. Redirecionar para Stripe Checkout
-      const stripe = await loadStripe(process.env.[REDACTED_TOKEN])
+      const stripe = await loadStripe(process.env.decoded)
       
       if (!stripe) {
         setError('Erro ao carregar Stripe')
@@ -80,4 +80,4 @@ const [REDACTED_TOKEN] = ({ hourPackage, totalPrice }) => {
   )
 }
 
-export default [REDACTED_TOKEN]
+export default decoded

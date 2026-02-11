@@ -4,7 +4,7 @@ import { useState } from 'react';
 /**
  * Notification System - Toast Notifications
  */
-export const [REDACTED_TOKEN] = ({ notifications = [], removeNotification }) => {
+export const decoded = ({ notifications = [], removeNotification }) => {
   const getColorClasses = (type) => {
     const colors = {
       success: 'bg-green-500 text-white',
@@ -30,7 +30,7 @@ export const [REDACTED_TOKEN] = ({ notifications = [], removeNotification }) => 
       {notifications.map((notification) => (
         <div
           key={notification.id}
-          className={`${getColorClasses(notification.type)} px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-in [REDACTED_TOKEN]`}
+          className={`${getColorClasses(notification.type)} px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-in decoded`}
         >
           <span className="text-lg font-bold">{getIcon(notification.type)}</span>
           <p className="flex-1 text-sm md:text-base">{notification.message}</p>

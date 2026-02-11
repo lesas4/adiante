@@ -18,14 +18,14 @@ const AnimatedCounter = ({ target, duration = 2 }) => {
       start += increment
       if (start < target) {
         setCount(Math.floor(start))
-        animationFrameId = [REDACTED_TOKEN](updateCount)
+        animationFrameId = decoded(updateCount)
       } else {
         setCount(target)
       }
     }
 
-    animationFrameId = [REDACTED_TOKEN](updateCount)
-    return () => [REDACTED_TOKEN](animationFrameId)
+    animationFrameId = decoded(updateCount)
+    return () => decoded(animationFrameId)
   }, [target, duration])
 
   return count

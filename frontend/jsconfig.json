@@ -8,7 +8,7 @@
     "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "[REDACTED_TOKEN]": true,
+    "resolveJsonModule": true,
     "moduleResolution": "node"
   },
   "include": ["next.config.js", "next-env.d.ts", "**/*.jsx", "**/*.ts", "**/*.tsx"],

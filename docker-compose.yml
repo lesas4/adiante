@@ -30,7 +30,8 @@ services:
     ports:
       - "3001:3001"
     volumes:
-      - ./backend:/app
+      # Não montar o diretório inteiro da aplicação para evitar sobrescrever
+      # os artefatos e dependências instaladas na imagem (node_modules).
       - ./backend/uploads:/app/uploads
       - ./backend/backend_data:/app/backend_data
     environment:
@@ -59,9 +60,6 @@ services:
       - backend
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:3001
     networks:

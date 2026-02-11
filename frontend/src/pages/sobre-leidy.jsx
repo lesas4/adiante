@@ -15,7 +15,7 @@ export default function Sobre() {
       <LeidyHeader />
 
       {/* Hero Section */}
-      <section className="pt-32 pb-12 bg-green-50">
+      <section className="pt-24 pb-12 bg-green-50">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold text-green-900 mb-4">
             Sobre a Leidy Cleaner
@@ -54,7 +54,7 @@ export default function Sobre() {
             
             <div className="rounded-lg overflow-hidden shadow-lg">
               <img 
-                src="https://images.unsplash.com/[REDACTED_TOKEN]?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
                 alt="Equipe Leidy Cleaner"
                 className="w-full h-auto object-cover"
               />

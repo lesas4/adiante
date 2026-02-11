@@ -30,7 +30,7 @@ export default function Contato() {
       <LeidyHeader />
 
       {/* Hero Section */}
-      <section className="pt-32 pb-12 bg-green-50">
+      <section className="pt-24 pb-12 bg-green-50">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold text-green-900 mb-4">
             Entre em Contato

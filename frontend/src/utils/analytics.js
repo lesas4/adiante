@@ -15,8 +15,8 @@ export const initializeGA = (measurementId) => {
     gtag('js', new Date());
     gtag('config', measurementId, {
       'anonymize_ip': true,
-      '[REDACTED_TOKEN]': true,
-      '[REDACTED_TOKEN]': true
+      'decoded': true,
+      'decoded': true
     });
   }
 }
@@ -80,7 +80,7 @@ export const trackPurchase = (orderId, hourPackage, totalPrice, taxes) => {
 }
 
 // Rastrear cálculo de preço
-export const [REDACTED_TOKEN] = (hours, estimatedPrice, characteristics) => {
+export const trackPriceCalculation = (hours, estimatedPrice, characteristics) => {
   if (typeof window !== 'undefined' && window.gtag) {
     window.gtag('event', 'price_calculation', {
       'event_category': 'engagement',
@@ -117,9 +117,9 @@ export const trackSectionView = (sectionName) => {
 }
 
 // Rastrear clique em testemunha/case
-export const [REDACTED_TOKEN] = (testimonialAuthor) => {
+export const trackTestimonialClick = (testimonialAuthor) => {
   if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', '[REDACTED_TOKEN]', {
+    window.gtag('event', 'decoded', {
       'event_category': 'engagement',
       'testimonial_author': testimonialAuthor,
       'timestamp': new Date().toISOString()
@@ -211,7 +211,7 @@ export const setupScrollTracking = () => {
 }
 
 // Rastrear tempo na página
-export const [REDACTED_TOKEN] = (pageName) => {
+export const trackPageEngagement = (pageName) => {
   if (typeof window !== 'undefined') {
     const startTime = Date.now();
 

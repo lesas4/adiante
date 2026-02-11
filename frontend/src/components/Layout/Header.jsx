@@ -28,11 +28,11 @@ export default function Header() {
               {/* Brand Image - Circular with Border */}
               <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full shadow-2xl overflow-hidden border-2 border-slate-300 dark:border-slate-600 hover:border-cyan-500 transition-all">
                 <Image 
-                  src="/icon-brand.jpg" 
+                  src="/logo-leidy.svg" 
                   alt="Leidy Cleaner Brand" 
                   width={64} 
                   height={64} 
-                  className="object-cover group-hover:scale-110 [REDACTED_TOKEN] duration-500" 
+                  className="object-cover group-hover:scale-110 duration-500" 
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-cyan-400 rounded-full animate-pulse shadow-lg"></div>
@@ -54,7 +54,7 @@ export default function Header() {
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href}>
                 <div className="px-4 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all font-medium flex items-center gap-2 group">
-                  <span className="group-hover:scale-125 [REDACTED_TOKEN]">{link.icon}</span>
+                  <span className="group-hover:scale-125">{link.icon}</span>
                   {link.label}
                 </div>
               </Link>

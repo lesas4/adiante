@@ -4,12 +4,12 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import HourCalculator from '../components/Pricing/HourCalculator';
+import HourPriceCalculator from '../components/Pricing/HourPriceCalculator';
 
 const HourCheckout = () => {
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [priceData, setPriceData] = useState(null);
-  const [processingPayment, [REDACTED_TOKEN]] = useState(false);
+  const [processingPayment, setProcessingPayment] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('pix');
   const [userCredit, setUserCredit] = useState(null);
 
@@ -40,14 +40,14 @@ const HourCheckout = () => {
     setPriceData(result);
   };
 
-  const [REDACTED_TOKEN] = async () => {
+  const handleCheckout = async () => {
     if (!priceData || !priceData.hours) {
       alert('Selecione uma quantidade de horas válida');
       return;
     }
 
     try {
-      [REDACTED_TOKEN](true);
+      setLoading(true);
 
       // 1. Iniciar compra do pacote
       const purchaseResponse = await fetch('/api/pricing/purchase-package', {
@@ -104,7 +104,7 @@ const HourCheckout = () => {
       console.error('Erro ao processar pagamento:', err);
       alert('Erro ao processar pagamento');
     } finally {
-      [REDACTED_TOKEN](false);
+      setProcessingPayment(false);
     }
   };
 
@@ -124,9 +124,9 @@ const HourCheckout = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Calculadora */}
           <div className="lg:col-span-2">
-            <HourCalculator
-              onCalculate={handleCalculate}
-              userId={typeof window !== 'undefined' ? localStorage.getItem('userId') : null}
+            <HourPriceCalculator
+              onPriceChange={handleCalculate}
+              multipleSites={false}
             />
           </div>
 
@@ -204,7 +204,7 @@ const HourCheckout = () => {
 
                   {/* Botão de Compra */}
                   <button
-                    onClick={[REDACTED_TOKEN]}
+                    onClick={() => setProcessingPayment(true)}  // Start payment processing
                     disabled={processingPayment}
                     className={`w-full py-3 px-4 rounded-lg font-bold text-white transition ${
                       processingPayment

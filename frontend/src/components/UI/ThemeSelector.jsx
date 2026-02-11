@@ -103,7 +103,7 @@ export default function ThemeSelector() {
         >
           {currentThemeName}
           <svg
-            className={`w-4 h-4 [REDACTED_TOKEN] ${isOpen ? 'rotate-180' : ''}`}
+            className={`w-4 h-4 decoded ${isOpen ? 'rotate-180' : ''}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

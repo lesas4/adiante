@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { XMarkIcon, [REDACTED_TOKEN], ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, decoded, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { usePWA } from '../../hooks/usePWA';
 
 const PWABanner = () => {
@@ -20,7 +20,7 @@ const PWABanner = () => {
   const handleDismiss = () => {
     setIsDismissed(true);
     // Salvar no localStorage para não mostrar novamente
-    localStorage.setItem('[REDACTED_TOKEN]', 'true');
+    localStorage.setItem('decoded', 'true');
   };
 
   return (
@@ -34,7 +34,7 @@ const PWABanner = () => {
         <div className="max-w-6xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 flex-1">
-              <[REDACTED_TOKEN] className="w-8 h-8" />
+              <decoded className="w-8 h-8" />
               <div className="flex-1">
                 <h3 className="font-bold text-sm sm:text-base">
                   Instale o App Leidy Cleaner

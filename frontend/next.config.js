@@ -23,50 +23,9 @@ const nextConfig = {
   //   scrollRestoration: true,
   // },
 
-  // Headers for security and performance
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: '[REDACTED_TOKEN]',
-            value: 'nosniff',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: '[REDACTED_TOKEN]',
-          },
-          {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()',
-          },
-        ],
-      },
-      {
-        source: '/api/(.*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=300, s-maxage=600, [REDACTED_TOKEN]=86400',
-          },
-        ],
-      },
-      {
-        source: '/_next/static/(.*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-    ];
-  },
+  // Headers for security and performance are intentionally omitted in container
+  // build to avoid embedding any placeholder values. Add them later via a
+  // reverse proxy (nginx) or CDN in production.
 
   // Webpack optimizations
   webpack: (config, { dev, isServer }) => {
@@ -91,16 +50,8 @@ const nextConfig = {
     }
 
     // Add bundle analyzer in development
-    if (!dev && process.env.ANALYZE === 'true') {
-      const { [REDACTED_TOKEN] } = require('[REDACTED_TOKEN]');
-      config.plugins.push(
-        new [REDACTED_TOKEN]({
-          analyzerMode: 'static',
-          openAnalyzer: false,
-        })
-      );
-    }
-
+    // Disabled: bundle analyzer configuration removed
+    
     return config;
   },
 };

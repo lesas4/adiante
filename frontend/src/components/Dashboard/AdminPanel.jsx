@@ -26,9 +26,9 @@ function AdminPanel() {
         setMetrics(data);
         
         // Simular dados de gráfico se não houver
-        setRevenueByMonth(data.revenueByMonth || [REDACTED_TOKEN]());
-        setRecentBookings(data.recentBookings || [REDACTED_TOKEN]());
-        setServiceBreakdown(data.serviceBreakdown || [REDACTED_TOKEN]());
+        setRevenueByMonth(data.revenueByMonth || decodedFunction());
+        setRecentBookings(data.recentBookings || decodedFunction());
+        setServiceBreakdown(data.serviceBreakdown || decodedFunction());
         
         setLoading(false);
       } catch (error) {
@@ -39,9 +39,9 @@ function AdminPanel() {
           teamMembers: 0,
           satisfaction: 0,
         });
-        setRevenueByMonth([REDACTED_TOKEN]());
-        setRecentBookings([REDACTED_TOKEN]());
-        setServiceBreakdown([REDACTED_TOKEN]());
+        setRevenueByMonth(decodedFunction());
+        setRecentBookings(decodedFunction());
+        setServiceBreakdown(decodedFunction());
         setLoading(false);
       }
     };
@@ -49,7 +49,7 @@ function AdminPanel() {
     fetchMetrics();
   }, []);
 
-  const [REDACTED_TOKEN] = () => [
+  const revenueData = () => [
     { month: 'Jan', revenue: 4000 },
     { month: 'Fev', revenue: 3000 },
     { month: 'Mar', revenue: 2000 },
@@ -58,14 +58,14 @@ function AdminPanel() {
     { month: 'Jun', revenue: 2390 },
   ];
 
-  const [REDACTED_TOKEN] = () => [
+  const ordersData = () => [
     { id: '#001', client: 'Maria Silva', service: 'Limpeza Residencial', date: '2026-01-31', status: 'confirmado', value: 250 },
     { id: '#002', client: 'João Santos', service: 'Limpeza Comercial', date: '2026-01-30', status: 'concluído', value: 450 },
     { id: '#003', client: 'Ana Costa', service: 'Limpeza Pós-obra', date: '2026-01-29', status: 'concluído', value: 800 },
     { id: '#004', client: 'Pedro Oliveira', service: 'Limpeza Residencial', date: '2026-01-28', status: 'pendente', value: 250 },
   ];
 
-  const [REDACTED_TOKEN] = () => [
+  const servicesData = () => [
     { name: 'Limpeza Residencial', value: 45 },
     { name: 'Limpeza Comercial', value: 30 },
     { name: 'Limpeza Pós-obra', value: 15 },

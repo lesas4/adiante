@@ -13,7 +13,7 @@ export default class ErrorBoundary extends React.Component {
     };
   }
 
-  static [REDACTED_TOKEN](error) {
+  static decoded(error) {
     return { hasError: true };
   }
 

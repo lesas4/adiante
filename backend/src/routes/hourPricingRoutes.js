@@ -4,8 +4,7 @@
  */
 
 const router = require('express').Router();
-const PLACEHOLDER = require('../services/PLACEHOLDER');
-const PricingService = require('../services/PricingService');
+const HourPricingService = require('../services/HourPricingService');
 const { authenticateToken } = require('../middleware/auth');
 
 /**
@@ -14,14 +13,20 @@ const { authenticateToken } = require('../middleware/auth');
  */
 router.get('/hour-packages', (req, res) => {
   try {
-    const packages = PLACEHOLDER.__PLACEHOLDER();
+    // Retornar pacotes sugeridos
+    const packages = [
+      { hours: 4, name: '4 Horas', description: 'Para limpeza rápida' },
+      { hours: 8, name: '8 Horas', description: 'Dia completo de limpeza' },
+      { hours: 16, name: '16 Horas', description: 'Dois dias de limpeza' },
+      { hours: 24, name: '24 Horas (mensal)', description: 'Um mês de serviço' }
+    ];
     res.json({
       success: true,
       packages: packages,
       message: 'Packages retrieved successfully',
     });
   } catch (error) {
-    console.error('[PLACEHOLDER] Error fetching packages:', error.message);
+    console.error('Error fetching packages:', error.message);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -32,11 +37,11 @@ router.get('/hour-packages', (req, res) => {
 /**
  * POST /api/pricing/calculate-hours
  * Calcular preço para uma determinada quantidade de horas
- * Body: { hours, characteristics }
+ * Body: { hours, extras: ['organizacao', 'pos_obra', 'levar_produtos'] }
  */
-router.post('/calculate-hours', async (req, res) => {
+router.post('/calculate-hours', (req, res) => {
   try {
-    const { hours, characteristics = {} } = req.body;
+    const { hours, extras = [] } = req.body;
 
     if (!hours || hours <= 0) {
       return res.status(400).json({
@@ -45,23 +50,65 @@ router.post('/calculate-hours', async (req, res) => {
       });
     }
 
-    const userId = req.user?.id;
-    const result = await PLACEHOLDER.calculateHourPrice({
-      hours: parseFloat(hours),
-      characteristics: characteristics,
-      userId: userId,
-    });
+    const result = HourPricingService.calculatePrice(parseFloat(hours), extras);
 
-    if (result.error) {
+    res.json({
+      success: true,
+      data: result
+    });
+  } catch (error) {
+    console.error('Error calculating price:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * POST /api/pricing/calculate-multiple
+ * Calcular preço para múltiplos locais/agendamentos
+ * Body: { bookings: [{ hours, extras, location }] }
+ */
+router.post('/calculate-multiple', (req, res) => {
+  try {
+    const { bookings } = req.body;
+
+    if (!Array.isArray(bookings) || bookings.length === 0) {
       return res.status(400).json({
         success: false,
-        error: result.error,
+        error: 'Bookings must be a non-empty array',
       });
     }
 
-    res.json(result);
+    const result = HourPricingService.calculateMultipleBookings(bookings);
+
+    res.json({
+      success: true,
+      data: result
+    });
   } catch (error) {
-    console.error('[PLACEHOLDER] Error calculating price:', error.message);
+    console.error('Error calculating multiple bookings:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * GET /api/pricing/hour-extras
+ * Listar todos os extras disponíveis
+ */
+router.get('/hour-extras', (req, res) => {
+  try {
+    const extras = HourPricingService.getAvailableExtras();
+    res.json({
+      success: true,
+      data: extras
+    });
+  } catch (error) {
+    console.error('Error fetching extras:', error.message);
     res.status(500).json({
       success: false,
       error: error.message,
