@@ -19,7 +19,7 @@ class PixService {
       // Como não temos dependência de brcode, vamos gerar o formato manual
       // Format: 00020126580014br.gov.bcb.pix...
       
-      const pixKey = process.env.PIX_KEY || 'limpezapro@pix.com';
+      const pixKey = process.env.BANK_PIX_KEY || process.env.PIX_KEY || 'limpezapro@pix.com';
       const merchantName = 'LIMPEZA PRO LTDA';
       const merchantCity = 'SAO PAULO';
       

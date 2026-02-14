@@ -220,9 +220,11 @@ class CacheService {
   };
 }
 
-// Cleanup automático a cada 10 minutos
-setInterval(() => {
-  CacheService.cleanup();
-}, 10 * 60 * 1000);
+// Cleanup automático a cada 10 minutos (não iniciar durante testes)
+if (process.env.NODE_ENV !== 'test') {
+  setInterval(() => {
+    CacheService.cleanup();
+  }, 10 * 60 * 1000);
+}
 
 module.exports = CacheService;

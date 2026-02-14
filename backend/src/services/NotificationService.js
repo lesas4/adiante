@@ -295,10 +295,17 @@ Qualquer dúvida, entre em contato! 📞`;
    */
   async getPreferences(userId) {
     try {
-      let prefs = await this.db.get(
-        'SELECT * FROM PLACEHOLDER WHERE userId = ?',
-        [userId]
-      );
+      // Try to read from `user_preferences` table if available
+      let prefs = null;
+      try {
+        prefs = await this.db.get(
+          'SELECT * FROM user_preferences WHERE userId = ?',
+          [userId]
+        );
+      } catch (err) {
+        // Table may not exist yet; fallback to defaults below
+        prefs = null;
+      }
 
       // Return defaults if not set
       if (!prefs) {
@@ -338,51 +345,52 @@ Qualquer dúvida, entre em contato! 📞`;
    */
   async updatePreferences(userId, preferences) {
     try {
-      const existing = await this.db.get(
-        'SELECT id FROM PLACEHOLDER WHERE userId = ?',
-        [userId]
-      );
-
-      if (existing) {
-        await this.db.run(`
-          UPDATE PLACEHOLDER SET
-            email_enabled = ?,
-            sms_enabled = ?,
-            whatsapp_enabled = ?,
-            push_enabled = ?,
-            reminder_2days = ?,
-            reminder_1day = ?,
-            reminder_1hour = ?,
-            phone_number = ?
-          WHERE userId = ?
-        `, [
-          preferences.email_enabled,
-          preferences.sms_enabled,
-          preferences.whatsapp_enabled,
-          preferences.push_enabled,
-          preferences.reminder_2days,
-          preferences.reminder_1day,
-          preferences.reminder_1hour,
-          preferences.phone_number,
-          userId
-        ]);
-      } else {
-        await this.db.run(`
-          INSERT INTO PLACEHOLDER 
-          (userId, email_enabled, sms_enabled, whatsapp_enabled, push_enabled, 
-           reminder_2days, reminder_1day, reminder_1hour, phone_number)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `, [
-          userId,
-          preferences.email_enabled,
-          preferences.sms_enabled,
-          preferences.whatsapp_enabled,
-          preferences.push_enabled,
-          preferences.reminder_2days,
-          preferences.reminder_1day,
-          preferences.reminder_1hour,
-          preferences.phone_number
-        ]);
+      // Upsert into `user_preferences` (fallback to insert/update depending on DB)
+      try {
+        const existing = await this.db.get('SELECT id FROM user_preferences WHERE userId = ?', [userId]);
+        if (existing) {
+          await this.db.run(`
+            UPDATE user_preferences SET
+              email_enabled = ?,
+              sms_enabled = ?,
+              whatsapp_enabled = ?,
+              push_enabled = ?,
+              reminder_2days = ?,
+              reminder_1day = ?,
+              reminder_1hour = ?,
+              phone_number = ?
+            WHERE userId = ?
+          `, [
+            preferences.email_enabled,
+            preferences.sms_enabled,
+            preferences.whatsapp_enabled,
+            preferences.push_enabled,
+            preferences.reminder_2days,
+            preferences.reminder_1day,
+            preferences.reminder_1hour,
+            preferences.phone_number,
+            userId
+          ]);
+        } else {
+          await this.db.run(`
+            INSERT INTO user_preferences
+            (userId, email_enabled, sms_enabled, whatsapp_enabled, push_enabled, reminder_2days, reminder_1day, reminder_1hour, phone_number)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `, [
+            userId,
+            preferences.email_enabled,
+            preferences.sms_enabled,
+            preferences.whatsapp_enabled,
+            preferences.push_enabled,
+            preferences.reminder_2days,
+            preferences.reminder_1day,
+            preferences.reminder_1hour,
+            preferences.phone_number
+          ]);
+        }
+      } catch (err) {
+        console.error('Error updating preferences (user_preferences table may be missing):', err.message);
+        throw err;
       }
 
     } catch (err) {

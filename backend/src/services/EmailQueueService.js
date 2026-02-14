@@ -13,46 +13,59 @@ const RedisService = require('./RedisService');
 
 // Criar fila de emails (tornar tolerante quando Redis não está disponível)
 let emailQueue;
-try {
-  const redisConfig = {
-    host: process.env.REDIS_HOST || 'localhost',
-    port: process.env.REDIS_PORT || 6379,
-    enableReadyCheck: false,
-    enableOfflineQueue: false,
-  };
-  
-  // Apenas add password se não estiver vazia
-  if (process.env.REDIS_PASSWORD && process.env.REDIS_PASSWORD.trim()) {
-    redisConfig.password = process.env.REDIS_PASSWORD;
-  }
-  
-  emailQueue = new Queue('email', {
-    redis: redisConfig,
-    defaultJobOptions: {
-      attempts: 3,
-      backoff: {
-        type: 'exponential',
-        delay: 2000,
-      },
-      removeOnComplete: true,
-      removeOnFail: false,
-    },
-    settings: {
-      lockDuration: 30000,
-      lockRenewTime: 15000,
-      maxStalledCount: 2,
-    },
-  });
-} catch (err) {
-  logger.warn('⚠️ Redis/bull não disponível — usando fila de email em modo fallback', { error: err.message });
-  // Fallback simples que expõe a API mínima usada pelo serviço
+const isTest = process.env.NODE_ENV === 'test';
+
+if (isTest) {
+  // Em testes, usar mock simples para evitar conexões Redis e timers
   emailQueue = {
     process: () => {},
     on: () => {},
-    add: async () => ({ id: `fallback-${Date.now()}` }),
+    add: async () => ({ id: `test-${Date.now()}` }),
     getJobCounts: async () => ({ active: 0, waiting: 0, completed: 0, failed: 0, delayed: 0 }),
     getFailed: async () => [],
   };
+} else {
+  try {
+    const redisConfig = {
+      host: process.env.REDIS_HOST || 'localhost',
+      port: process.env.REDIS_PORT || 6379,
+      enableReadyCheck: false,
+      enableOfflineQueue: false,
+    };
+    
+    // Apenas add password se não estiver vazia
+    if (process.env.REDIS_PASSWORD && process.env.REDIS_PASSWORD.trim()) {
+      redisConfig.password = process.env.REDIS_PASSWORD;
+    }
+    
+    emailQueue = new Queue('email', {
+      redis: redisConfig,
+      defaultJobOptions: {
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 2000,
+        },
+        removeOnComplete: true,
+        removeOnFail: false,
+      },
+      settings: {
+        lockDuration: 30000,
+        lockRenewTime: 15000,
+        maxStalledCount: 2,
+      },
+    });
+  } catch (err) {
+    logger.warn('⚠️ Redis/bull não disponível — usando fila de email em modo fallback', { error: err.message });
+    // Fallback simples que expõe a API mínima usada pelo serviço
+    emailQueue = {
+      process: () => {},
+      on: () => {},
+      add: async () => ({ id: `fallback-${Date.now()}` }),
+      getJobCounts: async () => ({ active: 0, waiting: 0, completed: 0, failed: 0, delayed: 0 }),
+      getFailed: async () => [],
+    };
+  }
 }
 
 class EmailQueueService {
@@ -513,6 +526,8 @@ class EmailQueueService {
    * Monitorar saúde da fila
    */
   async monitorQueueHealth() {
+    if (process.env.NODE_ENV === 'test') return; // Não iniciar timer durante testes
+
     setInterval(async () => {
       try {
         const counts = await this.queue.getJobCounts();

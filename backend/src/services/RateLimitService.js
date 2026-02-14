@@ -13,22 +13,24 @@ class RateLimitService {
   static cleanupInterval = 5 * 60 * 1000; // 5 minutos
 
   static {
-    // Cleanup automático
-    setInterval(() => {
-      const now = Date.now();
-      let cleaned = 0;
-      
-      for (const [key, data] of this.store.entries()) {
-        if (now - data.lastCheck > 60 * 60 * 1000) {
-          this.store.delete(key);
-          cleaned++;
+    // Cleanup automático (não iniciar em ambiente de teste)
+    if (process.env.NODE_ENV !== 'test') {
+      setInterval(() => {
+        const now = Date.now();
+        let cleaned = 0;
+        
+        for (const [key, data] of this.store.entries()) {
+          if (now - data.lastCheck > 60 * 60 * 1000) {
+            this.store.delete(key);
+            cleaned++;
+          }
         }
-      }
-      
-      if (cleaned > 0) {
-        logger.debug(`Rate limit cleanup: ${cleaned} entries removidas`);
-      }
-    }, this.cleanupInterval);
+        
+        if (cleaned > 0) {
+          logger.debug(`Rate limit cleanup: ${cleaned} entries removidas`);
+        }
+      }, this.cleanupInterval);
+    }
   }
 
   /**

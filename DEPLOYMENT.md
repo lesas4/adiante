@@ -1,3 +1,40 @@
+**Deployment Guide**
+
+Resumo rápido:
+- Pré-requisitos: Node.js 18+, Redis, SQLite (ou Postgres), Docker (opcional), domínio e TLS
+- Variáveis críticas: `STRIPE_SECRET_KEY`, `SMTP_PASS`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `WEBHOOK_SECRET_PIX`, `JWT_SECRET`, `REDIS_URL`
+
+Passos mínimos para deploy (produção):
+
+1) Provisionar infra
+  - Banco: preferível Postgres em produção; SQLite pode ser mantido para ambientes pequenos.
+  - Redis: necessário para filas (Bull). Configure `REDIS_URL` e habilite `USE_BULL=true`.
+  - Domínio + TLS: usar Let's Encrypt ou Load Balancer com TLS.
+
+2) Preparar secrets
+  - Use um secret manager (AWS Secrets Manager / Vault / GitHub Secrets) para armazenar variáveis sensíveis.
+  - Defina as variáveis listadas em `PRODUCTION_SECRETS.md`.
+
+3) Executar build e migrações
+  - Instalar dependências: `npm ci`
+  - Aplicar migrations: `npm run migrate` (ou `node src/db/runMigrations.js`)
+
+4) Iniciar serviços
+  - Exportar `REDIS_URL` e `USE_BULL=true`.
+  - Iniciar workers: `npm run queue:retry-worker` (ou usar systemd/PM2)
+  - Iniciar app: `npm start` (ou `pm2 start ecosystem.config.js`)
+
+5) Monitoramento e backups
+  - Configurar Sentry e alertas.
+  - Rotina de backup do DB (veja `scripts/backup_sqlite.sh`).
+
+6) Validar
+  - Testar endpoints de health: `/health`, `/health/db`, `/health/queue`.
+  - Testar fluxo PIX (geração, webhook, reconciliação) em ambiente de staging antes do go-live.
+
+Notas operacionais:
+- Não exponha `backend_data/database.db` sem backups e políticas de retenção.
+- Registrar webhook PIX junto ao banco: grave `WEBHOOK_SECRET_PIX` e o endpoint `https://<host>/api/payments/pix/webhook`.
 # 🚀 Guia de Deployment - Limpeza Pro
 
 Instruções passo-a-passo para fazer deploy da aplicação em produção.

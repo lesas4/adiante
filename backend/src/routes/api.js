@@ -52,6 +52,8 @@ const ChatController = require('../controllers/ChatController');
 const CDNAssetController = require('../controllers/CDNAssetController');
 const AuthController = require('../controllers/AuthController');
 const ProfileController = require('../controllers/ProfileController');
+const db = require('../db');
+const logger = require('../utils/logger');
 // other controllers with masked names now route to AutoPlaceholderController
 
 // Middleware
@@ -144,6 +146,120 @@ router.post('/refunds', authenticateToken, limiters.refund, authorizeRole(['admi
 // PIX Payments
 router.get('/payments/pix/:pixTransactionId', authenticateToken, (req, res) => {
   PaymentController.verifyPixPayment(req, res);
+});
+
+// Compatibilidade com frontend antigo: endpoints /api/pix/*
+const PixService = require('../services/PixService');
+const crypto = require('crypto');
+
+/**
+ * POST /api/pix/create
+ * Gera QR Code PIX para frontend (compatível com PixQRCodeCheckout)
+ */
+router.post('/pix/create', authenticateToken, async (req, res) => {
+  try {
+    const { bookingId, amount, orderId, description } = req.body;
+    const userId = req.user.userId || req.user.id;
+
+    if (!bookingId || !amount) {
+      return res.status(400).json({ success: false, error: 'bookingId e amount obrigatórios' });
+    }
+
+    const result = await PixService.generateQRCode(parseFloat(amount), bookingId, description || `Agendamento ${bookingId}`);
+
+    if (!result.success) {
+      return res.status(500).json({ success: false, error: result.error || 'Erro ao gerar PIX' });
+    }
+
+    // Salvar transação leve em transactions para rastreamento
+    const transactionId = crypto.randomUUID();
+    await db.run(
+      `INSERT INTO transactions (id, booking_id, user_id, amount, payment_method, status, pix_transaction_id, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
+      transactionId, bookingId, userId, parseFloat(amount), 'pix', 'pending', result.pixTransactionId
+    );
+
+    return res.json({
+      success: true,
+      data: {
+        brCode: result.brCode,
+        qrCodeImage: null,
+        transactionId: result.pixTransactionId,
+        expiresAt: result.expiresAt,
+        amount: parseFloat(amount)
+      }
+    });
+  } catch (err) {
+    logger.error('Error creating PIX', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Notification test endpoints (DEV)
+router.post('/notifications/test-email', authenticateToken, async (req, res) => {
+  try {
+    const { to, subject, template, data } = req.body;
+    const NotificationService = require('../services/NotificationService');
+    const notif = new NotificationService(require('../db'));
+
+    const emailTpls = require('../utils/emailTemplates');
+    const tpl = emailTpls[template || 'bookingConfirmation'];
+    let html = '';
+    let subj = subject || 'Teste de Email';
+    if (tpl) {
+      const rendered = tpl.template ? tpl.template(data || {}, { name: data?.userName || 'Cliente' }) : tpl;
+      html = rendered.html || rendered;
+      subj = tpl.subject || subj;
+    } else {
+      html = `<p>Test email</p>`;
+    }
+
+    const result = await notif.sendEmail(to, subj, html);
+    res.json({ success: true, result });
+  } catch (err) {
+    console.error('Test email error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/notifications/test-sms', authenticateToken, async (req, res) => {
+  try {
+    const { phone, message } = req.body;
+    const NotificationService = require('../services/NotificationService');
+    const notif = new NotificationService(require('../db'));
+    const result = await notif.sendSMS(phone, message || 'Teste SMS');
+    res.json({ success: true, result });
+  } catch (err) {
+    console.error('Test sms error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/pix/status/:pixTransactionId
+ * Retorna status do PIX (pending|received|confirmed|failed)
+ */
+router.get('/pix/status/:pixTransactionId', authenticateToken, async (req, res) => {
+  try {
+    const { pixTransactionId } = req.params;
+    if (!pixTransactionId) return res.status(400).json({ success: false, error: 'pixTransactionId required' });
+
+    const pixResult = await PixService.verifyPayment(pixTransactionId);
+
+    // Mapear status para frontend
+    let frontendStatus = 'waiting';
+    if (!pixResult.success) {
+      return res.json({ success: false, error: pixResult.error });
+    }
+    if (pixResult.status === 'paid') frontendStatus = 'confirmed';
+    else if (pixResult.status === 'pending') frontendStatus = 'received';
+    else if (pixResult.status === 'failed') frontendStatus = 'expired';
+
+    res.json({ success: true, data: { status: frontendStatus, amount: pixResult.amount, expiresAt: pixResult.expiresAt } });
+  } catch (err) {
+    logger.error('Error fetching PIX status', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // ===== REVIEWS =====

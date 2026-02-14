@@ -172,25 +172,71 @@ class RetryQueue {
    * Placeholder: Reprocessar webhook
    */
   async retryProcessWebhook(payload) {
-    // Implementação: chamar a mesma lógica de webhook
-    console.log('⏳ Reprocessando webhook:', payload.transaction_id);
-    return { success: true };
+    try {
+      const PixWebhookService = require('./PixWebhookService');
+      // payload pode conter { body, signature } ou já o objeto
+      const body = payload.body || payload;
+      const signature = payload.signature || payload.sign || null;
+
+      const result = await PixWebhookService.processWebhook(body, signature);
+      return result;
+    } catch (err) {
+      console.error('❌ retryProcessWebhook failed:', err.message);
+      return { success: false, error: err.message };
+    }
   }
 
   /**
    * Placeholder: Reenviar notificação
    */
-  async PLACEHOLDER(payload) {
-    console.log('⏳ Reenviando notificação para:', payload.phoneNumber);
-    return { success: true };
+  async retrySendNotification(payload) {
+    try {
+      const NotificationService = require('./NotificationService');
+      const notif = new NotificationService(db);
+
+      if (payload.type === 'sms') {
+        const res = await notif.sendSMS(payload.phoneNumber, payload.message);
+        return { success: true, result: res };
+      }
+
+      if (payload.type === 'whatsapp') {
+        const res = await notif.sendWhatsApp(payload.phoneNumber, payload.message);
+        return { success: true, result: res };
+      }
+
+      if (payload.type === 'email') {
+        const res = await notif.sendEmail(payload.to, payload.subject, payload.html);
+        return { success: true, result: res };
+      }
+
+      return { success: false, error: 'Unknown notification type' };
+    } catch (err) {
+      console.error('❌ retrySendNotification failed:', err.message);
+      return { success: false, error: err.message };
+    }
   }
 
   /**
    * Placeholder: Reconciliar pagamento
    */
-  async PLACEHOLDER(payload) {
-    console.log('⏳ Reconciliando pagamento:', payload.transactionId);
-    return { success: true };
+  async retryReconcilePayment(payload) {
+    try {
+      const PaymentReconciliationService = require('./PaymentReconciliationService');
+      // payload may contain transactionId or payment object
+      if (payload.transactionId) {
+        const payment = await db.get('SELECT * FROM payments WHERE transaction_id = ?', payload.transactionId);
+        if (!payment) return { success: false, error: 'Payment not found' };
+        const result = await PaymentReconciliationService.reconcilePayment(payment);
+        return result || { success: true };
+      }
+
+      // fallback: run full reconcile
+      const res = await PaymentReconciliationService.reconcileAll();
+      return res;
+    } catch (err) {
+      console.error('❌ retryReconcilePayment failed:', err.message);
+      return { success: false, error: err.message };
+    }
   }
 
   /**

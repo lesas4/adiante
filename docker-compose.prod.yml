@@ -1,4 +1,27 @@
 version: '3.8'
+services:
+  app:
+    image: termino-backend:latest
+    build: ./backend
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://redis:6379
+      - USE_BULL=true
+    depends_on:
+      - redis
+    restart: always
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis-data:/data
+    restart: always
+
+volumes:
+  redis-data:
+version: '3.8'
 
 services:
   postgres:

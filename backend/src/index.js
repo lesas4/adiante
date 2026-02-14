@@ -349,6 +349,28 @@ if (process.env.NODE_ENV !== 'test' || process.env.FORCE_RUN === 'true') {
       } catch (err) {
         logger.error('Erro ao inicializar scheduler', err);
       }
+      // Inicializar fila de retries (Bull) se configurado
+      if (process.env.USE_BULL === 'true') {
+        try {
+          require('./queues/retryQueue');
+          logger.info('Retry queue inicializada (Bull)');
+        } catch (err) {
+          logger.warn('Falha ao inicializar retry queue:', err && err.message);
+          // Fallback to polling runner
+          const PollingRetryRunner = require('./services/PollingRetryRunner');
+          PollingRetryRunner.start();
+          logger.info('PollingRetryRunner iniciado como fallback');
+        }
+      } else {
+        // If Bull not enabled, start polling fallback to ensure retries still happen
+        try {
+          const PollingRetryRunner = require('./services/PollingRetryRunner');
+          PollingRetryRunner.start();
+          logger.info('PollingRetryRunner iniciado (USE_BULL != true)');
+        } catch (err) {
+          logger.warn('Falha ao iniciar PollingRetryRunner:', err && err.message);
+        }
+      }
     });
   })();
 }

@@ -16,6 +16,72 @@ const PaymentService = require('../services/PaymentService');
 const DB_PATH = path.join(__dirname, '../../backend_data/database.db');
 
 /**
+ * POST /api/payments/pix/generate
+ * Gerar QR Code PIX dinâmico
+ */
+router.post('/pix/generate', authenticateToken, async (req, res) => {
+  try {
+    const { bookingId, amount, description = 'Agendamento Limpeza' } = req.body;
+
+    if (!bookingId || !amount) {
+      return res.status(400).json({ success: false, error: 'bookingId e amount obrigatórios' });
+    }
+
+    const PixService = require('../services/PixService');
+    const result = await PixService.generateQRCode(amount, bookingId, description);
+
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+
+    res.json(result);
+  } catch (error) {
+    console.error('Erro ao gerar PIX:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+/**
+ * GET /api/payments/pix/:pixTransactionId/verify
+ * Verificar se PIX foi pago
+ */
+router.get('/pix/:pixTransactionId/verify', authenticateToken, async (req, res) => {
+  try {
+    const PixService = require('../services/PixService');
+    const result = await PixService.verifyPayment(req.params.pixTransactionId);
+
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+/**
+ * POST /api/payments/pix/webhook
+ * Webhook do banco para confirmar PIX
+ */
+router.post('/pix/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  try {
+    const signature = req.headers['x-pix-signature'] || req.headers['x-signature'];
+    const PixWebhookService = require('../services/PixWebhookService');
+
+    // Validar assinatura se existir
+    if (signature && process.env.WEBHOOK_SECRET_PIX) {
+      const isValid = PixWebhookService.validateSignature(req.body, signature, process.env.WEBHOOK_SECRET_PIX);
+      if (!isValid) {
+        return res.status(401).json({ error: 'Assinatura inválida' });
+      }
+    }
+
+    const result = await PixWebhookService.processWebhook(req.body);
+    res.json(result);
+  } catch (error) {
+    console.error('Erro no webhook PIX:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+/**
  * POST /api/payments/create-checkout
  * Criar sessão de checkout Stripe
  */

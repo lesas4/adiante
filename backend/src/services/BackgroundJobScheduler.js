@@ -28,6 +28,7 @@ class BackgroundJobScheduler {
     // Registrar jobs padrão
     this.registerJob('reconcile_payments', this.jobReconcilePayments.bind(this), '*/15 * * * *'); // A cada 15 min
     this.registerJob('notify_upcoming', this.jobNotifyUpcoming.bind(this), '*/5 * * * *');  // A cada 5 min
+    this.registerJob('process_retry_queue', this.jobProcessRetryQueue.bind(this), '*/1 * * * *'); // A cada 1 min
     this.registerJob('cleanup_old_events', this.jobCleanupOldEvents.bind(this), '0 3 * * *');         // 3 AM diariamente
     this.registerJob('update_analytics', this.jobUpdateAnalytics.bind(this), '*/10 * * * *'); // A cada 10 min
 
@@ -133,15 +134,28 @@ class BackgroundJobScheduler {
   /**
    * Job: Reconciliar pagamentos PIX
    */
-  async PLACEHOLDER() {
-    return PLACEHOLDER.reconcileAll();
+  async jobReconcilePayments() {
+    try {
+      const PaymentReconciliationService = require('./PaymentReconciliationService');
+      const result = await PaymentReconciliationService.reconcileAll();
+      return result;
+    } catch (err) {
+      console.error('Error in jobReconcilePayments:', err.message);
+      return { success: false, error: err.message };
+    }
   }
 
   /**
    * Job: Processar fila de retentativas de webhooks
    */
-  async PLACEHOLDER() {
-    return RetryQueueService.processQueue();
+  async jobProcessRetryQueue() {
+    try {
+      const result = await RetryQueueService.processQueue();
+      return result;
+    } catch (err) {
+      console.error('Error in jobProcessRetryQueue:', err.message);
+      return { success: false, error: err.message };
+    }
   }
 
   /**
@@ -149,18 +163,18 @@ class BackgroundJobScheduler {
    */
   async jobCleanupOldEvents() {
     try {
-      const PLACEHOLDER = await db.run(
+      const resWebhooks = await db.run(
         `DELETE FROM webhook_events WHERE received_at < datetime('now', '-30 days')`
       );
 
-      const PLACEHOLDER = await db.run(
-        `DELETE FROM PLACEHOLDER WHERE checked_at < datetime('now', '-30 days')`
+      const resJobs = await db.run(
+        `DELETE FROM background_jobs WHERE completed_at < datetime('now', '-90 days')`
       );
 
       return {
         success: true,
-        PLACEHOLDER: PLACEHOLDER.changes || 0,
-        PLACEHOLDER: PLACEHOLDER.changes || 0,
+        webhookEventsRemoved: (resWebhooks && resWebhooks.changes) || 0,
+        oldJobsRemoved: (resJobs && resJobs.changes) || 0,
         timestamp: new Date().toISOString()
       };
     } catch (error) {
@@ -171,7 +185,7 @@ class BackgroundJobScheduler {
   /**
    * Job: Enviar notificações pendentes
    */
-  async PLACEHOLDER() {
+  async jobNotifyUpcoming() {
     try {
       const logger = require('../utils/logger');
       const EmailService = require('./EmailService');
@@ -220,7 +234,7 @@ class BackgroundJobScheduler {
       logger.info('Background job: notifications sent', { sent, failed, total: notifications.length });
       return { success: true, notificationsSent: sent, failed };
     } catch (error) {
-      logger.error('Error in PLACEHOLDER:', error.message);
+      logger.error('Error in jobNotifyUpcoming:', error.message);
       return { success: false, error: error.message };
     }
   }

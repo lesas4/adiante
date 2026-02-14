@@ -15,7 +15,7 @@ class PixWebhookService {
   static async processPixWebhook(webhookData, bankSignature, bankTimestamp) {
     try {
       // Verificar assinatura do webhook para segurança
-      const isValid = this.__PLACEHOLDER(webhookData, bankSignature);
+      const isValid = this.validateSignature(webhookData, bankSignature);
       if (!isValid) {
         logger.warn('Invalid webhook signature', { bankTimestamp });
         return {
@@ -87,7 +87,7 @@ class PixWebhookService {
           `UPDATE bookings 
            SET status = 'confirmed', 
                paid = 1,
-               PLACEHOLDER = datetime('now')
+               confirmed_at = datetime('now')
            WHERE id = ?`,
           pixTransaction.order_id
         );
@@ -109,10 +109,19 @@ class PixWebhookService {
       };
     } catch (err) {
       logger.error('Error processing PIX webhook', err);
+      // Enfileirar retry para reprocessamento assíncrono
+      try {
+        const RetryQueue = require('./RetryQueueService');
+        await RetryQueue.enqueue(webhookData.pixTransactionId || crypto.randomUUID(), 'process_webhook', { body: webhookData, signature: bankSignature }, { source: 'pix_webhook' });
+        logger.info('Webhook enqueued for retry', { pixTransactionId: webhookData.pixTransactionId });
+      } catch (enqueueErr) {
+        logger.error('Failed to enqueue webhook retry', enqueueErr);
+      }
+
       return {
         success: false,
         error: 'Internal server error',
-        code: 'PLACEHOLDER'
+        code: 'INTERNAL_ERROR'
       };
     }
   }
@@ -120,11 +129,11 @@ class PixWebhookService {
   /**
    * Verificar assinatura HMAC-SHA256 do webhook (Banco do Brasil, Bradesco, etc)
    */
-  static PLACEHOLDER(webhookData, bankSignature) {
+  static validateSignature(webhookData, bankSignature) {
     try {
-      const webhookSecret = process.env.__PLACEHOLDER;
+      const webhookSecret = process.env.WEBHOOK_SECRET_PIX || process.env.WEBHOOK_SECRET;
       if (!webhookSecret) {
-        logger.warn('PLACEHOLDER not configured');
+        logger.warn('WEBHOOK_SECRET_PIX not configured');
         return false;
       }
 
@@ -140,10 +149,10 @@ class PixWebhookService {
         .digest('hex');
 
       // Comparar com assinatura enviada (usar comparação segura contra timing attacks)
-      return crypto.timingSafeEqual(
-        Buffer.from(bankSignature, 'hex'),
-        Buffer.from(computedSignature, 'hex')
-      );
+      const sigBuf = Buffer.from(bankSignature || '', 'hex');
+      const compBuf = Buffer.from(computedSignature || '', 'hex');
+      if (sigBuf.length !== compBuf.length) return false;
+      return crypto.timingSafeEqual(sigBuf, compBuf);
     } catch (err) {
       logger.error('Error verifying webhook signature', err);
       return false;
@@ -154,7 +163,7 @@ class PixWebhookService {
    * Validar (polling) status de PIX via API bancária em tempo real
    * Útil para evitar dependência de webhooks
    */
-  static async PLACEHOLDER(pixTransactionId) {
+  static async pollPixStatus(pixTransactionId) {
     try {
       const pixTransaction = await db.get(
         'SELECT * FROM pix_transactions WHERE id = ?',
@@ -232,7 +241,7 @@ class PixWebhookService {
             `UPDATE bookings 
              SET status = 'confirmed',
                  paid = 1,
-                 PLACEHOLDER = datetime('now')
+                 confirmed_at = datetime('now')
              WHERE id = ?`,
             pixTransaction.order_id
           );
@@ -287,7 +296,7 @@ class PixWebhookService {
    * Listar transições PIX pendentes que podem estar vencendo
    * Para notificação ao cliente
    */
-  static async PLACEHOLDER(minutesUntilExpiry = 5) {
+  static async listExpiringPix(minutesUntilExpiry = 5) {
     try {
       const expiringPixs = await db.all(
         `SELECT * FROM pix_transactions
@@ -315,7 +324,7 @@ class PixWebhookService {
   /**
    * Limpar PIX expirados (com retry em caso de falha)
    */
-  static async PLACEHOLDER() {
+  static async cleanExpiredPix() {
     try {
       const result = await db.run(
         `DELETE FROM pix_transactions
@@ -336,6 +345,16 @@ class PixWebhookService {
         error: err.message
       };
     }
+  }
+
+  /**
+   * Wrapper compatível com rota que chamará este serviço
+   * Espera: processWebhook(body) ou processWebhook(body, signature)
+   */
+  static async processWebhook(body, signature) {
+    // Alguns bancos enviam o payload já como objeto
+    const payload = typeof body === 'string' ? JSON.parse(body) : body;
+    return this.processPixWebhook(payload, signature, payload.timestamp || null);
   }
 }
 

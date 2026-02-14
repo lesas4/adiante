@@ -19,6 +19,7 @@
     "db:init": "node scripts/initDb.js",
     "queue:worker": "node src/workers/emailQueueWorker.js",
     "queue:worker:watch": "nodemon src/workers/emailQueueWorker.js",
+    "queue:retry-worker": "node src/workers/retryQueueWorker.js",
     "queue:clean": "node -e \"require('./src/services/EmailQueueService.js').cleanFailedJobs().then(() => process.exit(0))\"",
     "queue:stats": "node -e \"require('./src/services/EmailQueueService.js').getQueueStats().then(s => console.log(JSON.stringify(s, null, 2))).then(() => process.exit(0))\"",
     "e2e": "playwright test",

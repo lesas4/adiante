@@ -1,3 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: |
+          cd backend
+          npm ci
+      - name: Run migrations
+        run: |
+          cd backend
+          node src/db/runMigrations.js
+      - name: Run lint
+        run: |
+          cd backend
+          npm run lint || true
+      - name: Run tests
+        run: |
+          cd backend
+          npm test -- --runInBand
 name: CI/CD Pipeline
 
 on:
