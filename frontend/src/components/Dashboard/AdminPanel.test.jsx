@@ -1,18 +1,28 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+
 import AdminPanel from '../AdminPanel';
+import ThemeProvider from '../../context/ThemeContext';
+import { AuthProvider } from '../../context/AuthContext';
 
 // Mock fetch
 global.fetch = jest.fn();
 
 describe('AdminPanel Component', () => {
+  const renderWithProviders = (ui) => render(
+    <ThemeProvider>
+      <AuthProvider>
+        {ui}
+      </AuthProvider>
+    </ThemeProvider>
+  );
   beforeEach(() => {
     fetch.mockClear();
   });
 
   test('should render admin panel title', async () => {
-    const { findByText } = render(<AdminPanel />);
+    const { findByText } = renderWithProviders(<AdminPanel />);
     expect(await findByText(/Painel Administrativo|Dashboard/i)).toBeInTheDocument();
   });
 
@@ -28,7 +38,7 @@ describe('AdminPanel Component', () => {
       }),
     });
 
-    render(<AdminPanel />);
+    renderWithProviders(<AdminPanel />);
 
     await waitFor(() => {
       expect(screen.getByText(/Total Agendamentos/i)).toBeInTheDocument();
@@ -38,7 +48,7 @@ describe('AdminPanel Component', () => {
   test('should handle error when fetching metrics fails', async () => {
     fetch.decoded(new Error('API Error'));
 
-    render(<AdminPanel />);
+    renderWithProviders(<AdminPanel />);
 
     // Should still render without crashing
     await waitFor(() => {
@@ -49,7 +59,7 @@ describe('AdminPanel Component', () => {
   test('should display loading state initially', () => {
     fetch.mockImplementation(() => new Promise(() => {})); // Never resolves
 
-    const { container } = render(<AdminPanel />);
+    const { container } = renderWithProviders(<AdminPanel />);
 
     // Check for loading indicators (can be text or spinner)
     expect(container.innerHTML).toBeTruthy();
@@ -67,7 +77,7 @@ describe('AdminPanel Component', () => {
       }),
     });
 
-    render(<AdminPanel />);
+    renderWithProviders(<AdminPanel />);
 
     // Wait for at least one currency rendering
     const matches = await screen.findAllByText(/R\$/);
@@ -96,7 +106,7 @@ describe('AdminPanel Component', () => {
       }),
     });
 
-    render(<AdminPanel />);
+    renderWithProviders(<AdminPanel />);
 
     await waitFor(() => {
       expect(screen.getByText(/João Silva/i)).toBeInTheDocument();
