@@ -68,7 +68,8 @@ curl -X POST http://localhost:3001/api/auth/login \
 **Informações da conta:**
 ```
 Agência:  0435
-Conta:    000827519788-9
+Conta:    5961069655-2
+Operação: 3701
 PIX:      51 98033-0422 (celular)
 Titular:  Leidy Cleaner
 ```

@@ -31,10 +31,11 @@
 | **Tipo** | Telefone |
 | **Email Backup** | `leidycleaner@gmail.com` |
 
-### Banco (Depósitos)
+### Banco (Depósitos) - ATUALIZADO
 | Campo | Valor |
 |-------|-------|
-| **Conta** | `000827519788-9` |
+| **Conta** | `5961069655-2` |
+| **Operação** | `3701` |
 | **Agência** | `0435` |
 | **Banco** | A confirmar (código: 001 = Banco do Brasil) |
 | **Titular** | A confirmar |
@@ -59,7 +60,8 @@ TWILIO_PHONE_NUMBER=+5551980303740
 [REDACTED_TOKEN]=whatsapp:+5551980303740
 PIX_KEY=51980330422
 PIX_EMAIL=leidycleaner@gmail.com
-PIX_ACCOUNT_NUMBER=000827519788-9
+PIX_ACCOUNT_NUMBER=5961069655-2
+PIX_ACCOUNT_OPERATION=3701
 PIX_ACCOUNT_AGENCY=0435
 ```
 
@@ -108,7 +110,7 @@ TWILIO_AUTH_TOKEN=[REDACTED_TOKEN]
 
 #### 5. **Confirmação de Banco** (Qual banco?)
 ```bash
-# Verificar qual banco é a conta 0435-000827519788-9:
+# Verificar qual banco é a conta 0435-5961069655-2:
 # Opções comuns no Brasil:
 # - 001 = Banco do Brasil (atual)
 # - 033 = Santander
@@ -170,7 +172,7 @@ PIX_BANK_CODE=001  # Confirmar banco real
 ✅ **PIX Registrado**: 51 98033-0422  
 ✅ **Email Contato**: leidycleaner@gmail.com  
 ✅ **Número Telefone**: +55 51 98030-3740  
-✅ **Conta Bancária**: 000827519788-9 / Agência 0435  
+✅ **Conta Bancária**: 5961069655-2 / Operação 3701 / Agência 0435  
 ✅ **Admin**: fransmalifra@gmail.com / vfly2008  
 
 ---
@@ -194,7 +196,8 @@ const CONTACT_INFO = {
   email: 'leidycleaner@gmail.com',
   whatsapp: 'https://wa.me/5551980303740',
   pix: '51980330422',
-  bankAccount: '000827519788-9',
+  bankAccount: '5961069655-2',
+  bankOperation: '3701',
   agency: '0435'
 };
 ```

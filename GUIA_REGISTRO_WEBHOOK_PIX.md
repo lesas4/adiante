@@ -14,7 +14,8 @@
 ```
 Banco: ?
 Agência: 0435
-Conta: 000827519788-9
+Conta: 5961069655-2
+Operação: 3701
 Titular: Leidy Rani Delgado
 
 Chave PIX: fransmalifra@gmail.com
@@ -158,7 +159,8 @@ x-webhook-signature: abc123def456...
 **Pré-requisitos para receber webhooks**:
 - [ ] Conta bancária ativa
 - [ ] Agência verificada (0435 ✅)
-- [ ] Conta verificada (000827519788-9)
+- [x] Conta verificada (5961069655-2)
+- [x] Operação verificada (3701)
 - [ ] CNPJ/CPF validado
 - [ ] Domínio com SSL/TLS válido
 - [ ] IP whitelist configurado (se solicitado)
@@ -243,7 +245,8 @@ curl -X POST http://localhost:3001/api/pix/webhooks \
 ## ✅ Checklist de Implementação
 
 - [x] Agência confirmada: 0435
-- [x] Conta confirmada: 000827519788-9
+- [x] Conta confirmada: 5961069655-2
+- [x] Operação confirmada: 3701
 - [x] Backend implementado (PixPaymentService, [REDACTED_TOKEN])
 - [x] Endpoints criados (5 rotas PIX)
 - [x] Database migrado (tabela payments atualizada)

@@ -95,7 +95,8 @@ Este valor será necessário para:
 ```
 Informações da Conta:
    • Agência: 0435
-   • Conta: 000827519788-9
+   • Conta: 5961069655-2
+   • Operação: 3701
 
 Pergunte:
    "Qual é o código COMPE deste banco?"
@@ -236,7 +237,8 @@ Chave: 51 98033-0422
 Email: leidycleaner@gmail.com
 
 BANCO
-Conta: 000827519788-9
+Conta: 5961069655-2
+Operação: 3701
 Agência: 0435
 Banco: <código_001_ou_outro>
 

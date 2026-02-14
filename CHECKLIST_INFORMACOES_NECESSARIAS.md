@@ -5,7 +5,8 @@
 ### ✅ FORNECIDAS (Confirmadas)
 - [x] PIX: `51 98033-0422`
 - [x] Email Contato: `leidycleaner@gmail.com`
-- [x] Conta Bancária: `000827519788-9`
+- [x] Conta Bancária: `5961069655-2`
+- [x] Operação: `3701`
 - [x] Agência: `0435`
 - [x] Telefone: `+55 51 98030-3740`
 - [x] Email Admin: `fransmalifra@gmail.com`
@@ -89,7 +90,8 @@ cat backend/.env | grep PIX
 # 2. Validar que os dados foram atualizados:
 PIX_KEY=51980330422 ✅
 PIX_EMAIL=leidycleaner@gmail.com ✅
-PIX_ACCOUNT_NUMBER=000827519788-9 ✅
+PIX_ACCOUNT_NUMBER=5961069655-2 ✅
+PIX_ACCOUNT_OPERATION=3701 ✅
 PIX_ACCOUNT_AGENCY=0435 ✅
 ```
 
@@ -176,7 +178,7 @@ openssl rand -hex 32
 
 ### 4. **Confirmar Banco**
 - [ ] Ligar para banco / acessar portal
-- [ ] Confirmar: Conta `000827519788-9` agência `0435` é qual banco?
+- [x] Confirmar: Conta `5961069655-2` agência `0435` operação `3701`
 - [ ] Pedir acesso a "API Developers" ou "Integrações"
 
 ---
@@ -190,7 +192,8 @@ openssl rand -hex 32
 | PIX | 51 98033-0422 | ✅ |
 | Email | leidycleaner@gmail.com | ✅ |
 | Telefone | +55 51 98030-3740 | ✅ |
-| Conta | 000827519788-9 | ✅ |
+| Conta | 5961069655-2 | ✅ |
+| Operação | 3701 | ✅ |
 | Agência | 0435 | ✅ |
 | Admin Email | fransmalifra@gmail.com | ✅ |
 | Admin Pass | vfly2008 | ⚠️ MUDAR |

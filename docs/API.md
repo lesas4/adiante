@@ -10,7 +10,8 @@ https://api.limpezapro.com/api
 - Nome: Leidy Cleaner
 - Telefone: +55 51 98030-3740
 - PIX (chave): 51 98033 0422
-- Conta: 000827519788-9
+- Conta: 5961069655-2
+- Operação: 3701
 - Agência: 0435
 
 ## Authentication
