@@ -107,14 +107,53 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 
       if (bookingId && userId) {
         logger?.info('Payment confirmed', { bookingId, userId });
-        // TODO: Atualizar status do agendamento no banco como "confirmado"
+        // ✅ IMPLEMENTADO: Atualizar status do agendamento no banco como "confirmado"
+        try {
+          await new Promise((resolve, reject) => {
+            const db = new sqlite3.Database(DB_PATH);
+            db.run(
+              'UPDATE bookings SET status = ?, paid = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+              ['confirmed', bookingId],
+              function(err) {
+                db.close();
+                if (err) {
+                  logger?.error('Failed to update booking status', { bookingId, error: err.message });
+                  reject(err);
+                } else {
+                  logger?.info('Booking status updated to confirmed', { bookingId });
+                  resolve();
+                }
+              }
+            );
+          });
+        } catch (updateErr) {
+          logger?.error('Error updating booking after payment', { bookingId, error: updateErr.message });
+        }
       }
     }
 
     if (event.type === 'charge.failed') {
       const charge = event.data.object;
       console.error(`❌ Pagamento falhou: ${charge.id}`);
-      // TODO: Notificar usuário sobre falha
+      // ✅ IMPLEMENTADO: Notificar usuário sobre falha
+      try {
+        const NotificationService = require('../utils/notifications');
+        if (charge.metadata?.bookingId && charge.metadata?.userId) {
+          await NotificationService.notifyIssue({
+            type: 'payment_failure',
+            message: `Falha no processamento do pagamento para o agendamento ${charge.metadata.bookingId}`,
+            userId: charge.metadata.userId,
+            bookingId: charge.metadata.bookingId,
+            chargeId: charge.id
+          });
+          logger?.warn('User notified about payment failure', { 
+            userId: charge.metadata.userId, 
+            bookingId: charge.metadata.bookingId 
+          });
+        }
+      } catch (notifyErr) {
+        logger?.error('Failed to send payment failure notification', { error: notifyErr.message });
+      }
     }
 
     // Retornar 200 para Stripe reconhecer recebimento
