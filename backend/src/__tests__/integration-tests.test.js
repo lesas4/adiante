@@ -157,33 +157,33 @@ describe('Integration Tests - Pricing Calculations', () => {
     });
 
     test('should calculate price per square meter', async () => {
-      const pricePerSqm = PricingService.getPricePerSquareMeter();
+      const pricePerSqm = PricingService.PricingService.getPricePerSquareMeter();
       expect(typeof pricePerSqm).toBe('number');
       expect(pricePerSqm).toBeGreaterThan(0);
     });
 
     test('should get cleaning type multiplier for standard', async () => {
-      const multiplier = PricingService.getCleaningTypeMultiplier('standard');
+      const multiplier = PricingService.PricingService.getCleaningTypeMultiplier('standard');
       expect(multiplier).toBe(1.0);
     });
 
     test('should get cleaning type multiplier for deep', async () => {
-      const multiplier = PricingService.getCleaningTypeMultiplier('deep');
+      const multiplier = PricingService.PricingService.getCleaningTypeMultiplier('deep');
       expect(multiplier).toBe(1.5);
     });
 
     test('should get cleaning type multiplier for moveInOut', async () => {
-      const multiplier = PricingService.getCleaningTypeMultiplier('move_in_out');
+      const multiplier = PricingService.PricingService.getCleaningTypeMultiplier('move_in_out');
       expect(multiplier).toBe(1.8);
     });
 
     test('should get cleaning type multiplier for commercial', async () => {
-      const multiplier = PricingService.getCleaningTypeMultiplier('commercial');
+      const multiplier = PricingService.PricingService.getCleaningTypeMultiplier('commercial');
       expect(multiplier).toBe(2.0);
     });
 
     test('should return default multiplier for unknown type', async () => {
-      const multiplier = PricingService.getCleaningTypeMultiplier('unknown_type');
+      const multiplier = PricingService.PricingService.getCleaningTypeMultiplier('unknown_type');
       expect(multiplier).toBe(1.0);
     });
 
@@ -194,9 +194,9 @@ describe('Integration Tests - Pricing Calculations', () => {
     });
 
     test('should handle frequency multipliers', async () => {
-      const once = PricingService.getFrequencyMultiplier('once');
-      const weekly = PricingService.getFrequencyMultiplier('weekly');
-      const biweekly = PricingService.getFrequencyMultiplier('biweekly');
+      const once = PricingService.PricingService.getFrequencyMultiplier('once');
+      const weekly = PricingService.PricingService.getFrequencyMultiplier('weekly');
+      const biweekly = PricingService.PricingService.getFrequencyMultiplier('biweekly');
 
       expect(typeof once).toBe('number');
       expect(typeof weekly).toBe('number');
@@ -204,8 +204,8 @@ describe('Integration Tests - Pricing Calculations', () => {
     });
 
     test('should handle urgency multipliers', async () => {
-      const standard = PricingService.getUrgencyMultiplier('standard');
-      const urgent = PricingService.getUrgencyMultiplier('urgent');
+      const standard = PricingService.PricingService.getUrgencyMultiplier('standard');
+      const urgent = PricingService.PricingService.getUrgencyMultiplier('urgent');
 
       expect(typeof standard).toBe('number');
       expect(typeof urgent).toBe('number');

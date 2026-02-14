@@ -14,11 +14,24 @@ try {
 }
 
 class PricingService {
+    // Métodos estáticos para compatibilidade com testes
+    static getPricePerSquareMeter() {
+      return (new PricingService()).pricePerSquareMeter();
+    }
+    static getCleaningTypeMultiplier(type) {
+      return (new PricingService()).cleaningTypeMultiplier(type);
+    }
+    static getFrequencyMultiplier(frequency) {
+      return (new PricingService()).frequencyMultiplier(frequency);
+    }
+    static getUrgencyMultiplier(urgency) {
+      return (new PricingService()).urgencyMultiplier(urgency);
+    }
   /**
    * Calcular preço dinâmico completo
    * Leva em conta: data, hora, cliente, histórico, etc
    */
-  async [REDACTED_TOKEN](data) {
+  async calculateDynamicPrice(data) {
     try {
       let basePrice = data.basePrice || 0;
 
@@ -29,12 +42,12 @@ class PricingService {
 
       // 2. Multiplicador por metragem
       if (data.metragem) {
-        basePrice += data.metragem * this.[REDACTED_TOKEN]();
+        basePrice += data.metragem * this.pricePerSquareMeter();
       }
 
       // 3. Multiplicador por tipo de limpeza
       if (data.cleaningType) {
-        basePrice *= this.[REDACTED_TOKEN](data.cleaningType);
+        basePrice *= this.cleaningTypeMultiplier(data.cleaningType);
       }
 
       // 4. Multiplicador de data/hora (SURGE PRICING)
@@ -43,12 +56,12 @@ class PricingService {
 
       // 5. Multiplicador de frequência
       if (data.frequency) {
-        basePrice *= this.[REDACTED_TOKEN](data.frequency);
+        basePrice *= this.frequencyMultiplier(data.frequency);
       }
 
       // 6. Multiplicador de urgência
       if (data.urgency) {
-        basePrice *= this.[REDACTED_TOKEN](data.urgency);
+        basePrice *= this.urgencyMultiplier(data.urgency);
       }
 
       // 7. Desconto por lealdade (cliente recorrente)
@@ -60,8 +73,8 @@ class PricingService {
       basePrice -= discount;
 
       // 9. Adicionar taxa de serviço (configurável via pricing-matrix.json)
-      const [REDACTED_TOKEN] = (pricingMatrix.[REDACTED_TOKEN] || 5) / 100;
-      const serviceFee = basePrice * [REDACTED_TOKEN];
+      const serviceFeePercent = (pricingMatrix.serviceFeePercent || 5) / 100;
+      const serviceFee = basePrice * serviceFeePercent;
       basePrice += serviceFee;
 
       // 10. Garantir preço mínimo (configurável)
@@ -74,19 +87,19 @@ class PricingService {
 
       // `loyaltyDiscount` é percentual; `discount` é valor absoluto sobre subtotal
       const subtotal = data.basePrice || (data.services ? data.services.reduce((s, x) => s + (x.basePrice || 0), 0) : 0);
-      const [REDACTED_TOKEN] = subtotal > 0 ? (discount / subtotal) : 0;
-      const combinedPercent = loyaltyDiscount + [REDACTED_TOKEN];
+      const discountPercent = subtotal > 0 ? (discount / subtotal) : 0;
+      const combinedPercent = loyaltyDiscount + discountPercent;
 
-      let [REDACTED_TOKEN] = discount;
+      let cappedDiscount = discount;
       if (combinedPercent > maximumDiscount) {
         // limitar desconto absoluto para não ultrapassar o teto
-        const [REDACTED_TOKEN] = Math.max(0, maximumDiscount - loyaltyDiscount);
-        [REDACTED_TOKEN] = Math.round((subtotal * [REDACTED_TOKEN]) * 100) / 100;
+        const allowedDiscountPercent = Math.max(0, maximumDiscount - loyaltyDiscount);
+        cappedDiscount = Math.round((subtotal * allowedDiscountPercent) * 100) / 100;
       }
 
       // Recalcular preço final (re-aplicar service fee and min were already applied above)
       // Note: loyalty already multiplicative applied above; we subtracted discount earlier, but
-      // ensure we use the capped `[REDACTED_TOKEN]` for breakdown clarity.
+      // ensure we use the capped `cappedDiscount` for breakdown clarity.
 
       // finalPrice já foi calculado em `basePrice` (com loyalty + serviceFee + min),
       // porém `discount` foi subtraído antes de serviceFee in previous steps — keep consistency
@@ -96,13 +109,13 @@ class PricingService {
         basePrice: data.basePrice || subtotal,
         surgeMultiplier: surgeMultiplier,
         loyaltyDiscount: loyaltyDiscount,
-        totalDiscount: [REDACTED_TOKEN],
+        totalDiscount: cappedDiscount,
         serviceFee: Math.round(serviceFee * 100) / 100,
         breakdown: {
           base: subtotal,
           surge: surgeMultiplier !== 1 ? `+${Math.round((surgeMultiplier - 1) * 100)}%` : '+0%',
           loyalty: loyaltyDiscount !== 0 ? `-${Math.round(loyaltyDiscount * 100)}%` : '0%',
-          discounts: [REDACTED_TOKEN],
+          discounts: cappedDiscount,
           serviceFee: Math.round(serviceFee * 100) / 100
         }
       };
@@ -184,14 +197,14 @@ class PricingService {
   /**
    * Preço por metro quadrado
    */
-  [REDACTED_TOKEN]() {
+  pricePerSquareMeter() {
     return 0.5; // R$ 0.50 por m²
   }
 
   /**
    * Multiplicador por tipo de limpeza
    */
-  [REDACTED_TOKEN](type) {
+  cleaningTypeMultiplier(type) {
     const multipliers = {
       standard: 1.0,
       deep: 1.5,
@@ -206,7 +219,7 @@ class PricingService {
   /**
    * Multiplicador por frequência
    */
-  [REDACTED_TOKEN](frequency) {
+  frequencyMultiplier(frequency) {
     const multipliers = {
       once: 1.0,
       weekly: 0.8,
@@ -219,7 +232,7 @@ class PricingService {
   /**
    * Multiplicador por urgência
    */
-  [REDACTED_TOKEN](urgency) {
+  urgencyMultiplier(urgency) {
     const multipliers = {
       normal: 1.0,
       express: 1.3,
@@ -268,29 +281,25 @@ class PricingService {
   /**
    * Simular múltiplas opções de preço
    */
-  async [REDACTED_TOKEN](data) {
+  async simulateOptions(data) {
     const options = {};
-    
     // Normal
-    options.normal = await this.[REDACTED_TOKEN]({
+    options.normal = await this.calculateDynamicPrice({
       ...data,
       urgency: 'normal',
       frequency: 'once'
     });
-
     // Express
-    options.express = await this.[REDACTED_TOKEN]({
+    options.express = await this.calculateDynamicPrice({
       ...data,
       urgency: 'express',
       frequency: 'once'
     });
-
     // Recorrente (desconto)
-    options.weekly = await this.[REDACTED_TOKEN]({
+    options.weekly = await this.calculateDynamicPrice({
       ...data,
       frequency: 'weekly'
     });
-
     return options;
   }
 
@@ -299,11 +308,13 @@ class PricingService {
    * Retorna apenas o `finalPrice` numérico para testes e código antigo.
    */
   async calculatePrice(data) {
-    const result = await this.[REDACTED_TOKEN](data);
+    const result = await this.calculateDynamicPrice(data);
     if (result && typeof result.finalPrice === 'number') return result.finalPrice;
     // fallback: try to coerce if structure changed
     return Number(result) || 0;
   }
 }
 
-module.exports = new PricingService();
+const instance = new PricingService();
+instance.PricingService = PricingService;
+module.exports = instance;
